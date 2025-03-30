@@ -1,6 +1,6 @@
 services:
-  database:
-    container_name: 'cassandra'
+  database_cassandra:
+    container_name: cassandra
     image: cassandra:latest
     environment:
       - CASSANDRA_DC=datacenter1
@@ -13,32 +13,71 @@ services:
       timeout: 5s
     ports:
       - '9042:9042'
+    volumes:
+      - cassandra_data:/var/lib/cassandra
     expose:
       - '9042'
     networks:
       - cassandra_network
 
-  backend:
-    container_name: 'backend-blps'
-    image: 'lunghr/blps-1:latest'
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'
-    depends_on:
-      database:
-        condition: service_healthy
+
+  database_postgres:
+    container_name: postgres
+    image: postgres:latest
     environment:
-       - SPRING_CASSANDRA_CONTACT_POINTS=cassandra
-       - SPRING_CASSANDRA_PORT=9042
-       - SPRING_CASSANDRA_LOCAL_DATACENTER=datacenter1
-    networks:
-      - cassandra_network
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init-users.sh:/docker-entrypoint-initdb.d/init-users.sh
+      - pgdata:/var/lib/postgresql/data
+
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "13228:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: database_postgres
+
+
+#  backend:
+#    container_name: 'backend-blps'
+#    image: 'lunghr/blps-1:latest'
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - '8080:8080'
+#    depends_on:
+#      database_cassandra:
+#        condition: service_healthy
+#      database_postgres:
+#        condition: service_healthy
+#    environment:
+#       - SPRING_CASSANDRA_CONTACT_POINTS=cassandra
+#       - SPRING_CASSANDRA_PORT=9042
+#       - SPRING_CASSANDRA_LOCAL_DATACENTER=datacenter1
+#       - SPRING_DATASOURCE_URL=${DB_URL}
+#       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+#       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+#    networks:
+#      - cassandra_network
 
 networks:
-    cassandra_network:
-        driver: bridge
-#
-#volumes:
-#  cassandra_data:
+  cassandra_network:
+    driver: bridge
+
+volumes:
+  cassandra_data: { }
+  pgdata: { }

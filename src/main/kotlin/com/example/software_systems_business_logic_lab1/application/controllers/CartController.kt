@@ -1,7 +1,7 @@
-package com.example.software_systems_business_logic_lab1.controllers
+package com.example.software_systems_business_logic_lab1.application.controllers
 
-import com.example.software_systems_business_logic_lab1.models.Cart
-import com.example.software_systems_business_logic_lab1.repos.CartRepository
+import com.example.software_systems_business_logic_lab1.application.models.Cart
+import com.example.software_systems_business_logic_lab1.application.repos.CartRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
