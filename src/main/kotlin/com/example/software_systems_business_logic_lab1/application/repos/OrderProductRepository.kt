@@ -1,0 +1,8 @@
+package com.example.software_systems_business_logic_lab1.application.repos
+
+import com.example.software_systems_business_logic_lab1.application.models.OrderProduct
+import com.example.software_systems_business_logic_lab1.application.models.key_classes.OrderProductKey
+import org.springframework.data.cassandra.repository.CassandraRepository
+
+interface OrderProductRepository: CassandraRepository<OrderProduct, OrderProductKey> {
+}

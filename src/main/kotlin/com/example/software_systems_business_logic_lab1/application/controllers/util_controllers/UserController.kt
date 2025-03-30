@@ -1,0 +1,21 @@
+package com.example.software_systems_business_logic_lab1.application.controllers.util_controllers
+
+import com.example.software_systems_business_logic_lab1.application.dto.UserDto
+import com.example.software_systems_business_logic_lab1.application.models.User
+import com.example.software_systems_business_logic_lab1.application.services.UserService
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/user")
+class UserController(
+    private val userService: UserService,
+) {
+
+    @PostMapping("/create")
+    fun createUser(@RequestBody userDto: UserDto): User {
+        return userService.createUser(userDto)
+    }
+}

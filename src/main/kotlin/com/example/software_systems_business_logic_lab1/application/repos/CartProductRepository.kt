@@ -1,0 +1,8 @@
+package com.example.software_systems_business_logic_lab1.application.repos
+
+import com.example.software_systems_business_logic_lab1.application.models.CartProduct
+import com.example.software_systems_business_logic_lab1.application.models.key_classes.CartProductKey
+import org.springframework.data.cassandra.repository.CassandraRepository
+
+interface CartProductRepository: CassandraRepository<CartProduct, CartProductKey> {
+}
