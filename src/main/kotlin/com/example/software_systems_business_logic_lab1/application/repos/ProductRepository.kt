@@ -8,4 +8,5 @@ import java.util.UUID
 interface ProductRepository: CassandraRepository<Product, ProductSubcatalogKey> {
     fun findByKeySubcatalogName(subcatalogName: String): List<Product>
 
+
 }

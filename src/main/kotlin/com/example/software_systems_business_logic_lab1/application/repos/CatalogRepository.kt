@@ -9,4 +9,6 @@ interface CatalogRepository: CassandraRepository<Catalog, UUID> {
     @Query("INSERT INTO catalogs (id, name) VALUES (?0, ?1) IF NOT EXISTS")
     fun saveIfNotExist(id: UUID, name: String): Boolean
 
+    fun findByName(name: String): Catalog?
+
 }

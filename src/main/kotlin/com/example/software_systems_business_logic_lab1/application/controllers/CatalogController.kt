@@ -1,5 +1,7 @@
 package com.example.software_systems_business_logic_lab1.application.controllers
 
+import com.example.software_systems_business_logic_lab1.application.models.Catalog
+import com.example.software_systems_business_logic_lab1.application.models.Subcatalog
 import com.example.software_systems_business_logic_lab1.application.services.CatalogService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -25,9 +27,8 @@ class CatalogController(
             example = "clothes"
         )
         @PathVariable catalogName: String
-    ) {
-        catalogService.createCatalog(catalogName)
-    }
+    ) : Catalog = catalogService.createCatalog(catalogName)
+
 
     @Operation(summary = "Create a new subcatalog")
     @PostMapping("/create/{catalogName}/{subcatalogName}")
@@ -42,8 +43,7 @@ class CatalogController(
             example = "electronics"
         )
         @PathVariable subcatalogName: String
-    ) {
+    ) : Subcatalog =
         catalogService.createSubcatalog(catalogName, subcatalogName)
-    }
 
 }
