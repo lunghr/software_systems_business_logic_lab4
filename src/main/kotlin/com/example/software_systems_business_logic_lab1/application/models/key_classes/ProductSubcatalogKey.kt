@@ -11,6 +11,6 @@ data class ProductSubcatalogKey(
     @PrimaryKeyColumn(name = "product_id", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
     val productId: UUID = UUID.randomUUID(),
 
-    @PrimaryKeyColumn(name = "subcatalog_id", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
-    val subcatalogId: UUID
+    @PrimaryKeyColumn(name = "subcatalog_name", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
+    val subcatalogName: String
 )

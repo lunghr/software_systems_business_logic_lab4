@@ -7,8 +7,8 @@ import java.util.UUID
 
 @PrimaryKeyClass
 data class CatalogSubcatalogKey(
-    @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED, name = "product_id")
-    val catalogId: UUID,
-    @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, name = "subcatalog_id")
-    val subcatalogId: UUID = UUID.randomUUID()
+    @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED, name = "catalog_name")
+    val catalogName: String,
+    @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, name = "subcatalog_name")
+    val subcatalogName: String
 )

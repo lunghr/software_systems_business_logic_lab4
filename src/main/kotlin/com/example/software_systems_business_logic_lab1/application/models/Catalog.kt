@@ -6,6 +6,6 @@ import java.util.UUID
 
 @Table("catalogs")
 data class Catalog(
-    @PrimaryKey val id: UUID = UUID.randomUUID(),
-    val name: String
+    @PrimaryKey val name: String,
+    val id: UUID = UUID.randomUUID(),
 )

@@ -8,5 +8,5 @@ import java.util.UUID
 @Table("subcatalogs")
 data class Subcatalog(
     @PrimaryKey val key: CatalogSubcatalogKey,
-    val name: String,
+    val id: UUID = UUID.randomUUID(),
 )
