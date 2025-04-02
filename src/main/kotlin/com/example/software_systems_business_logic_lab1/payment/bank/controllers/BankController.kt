@@ -1,0 +1,62 @@
+package com.example.software_systems_business_logic_lab1.payment.bank.controllers
+
+import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/bank")
+@Tag(name = "Bank Controller", description = "Controller for managing bank-related operations")
+class BankController(
+    private val bankService: BankService
+) {
+    @Operation(
+        summary = "Create new bank account",
+        description = "Creates a new bank account with the specified details"
+    )
+    @PostMapping("/create/bank-account")
+    fun createBankAccount() = bankService.createBankAccount()
+
+
+    @Operation(summary = "Create new card", description = "Creates a new card with the specified details")
+    @PostMapping("/{accountNumber}/create/card")
+    fun createCard(
+        @Parameter(
+            description = "Account number of the bank account to which the card will be linked",
+            example = "1234567890"
+        )
+        @PathVariable accountNumber: String,
+    ) = bankService.createCard(accountNumber)
+
+    @Operation(
+        summary = "Method to validate card data",
+        description = "Validates the card data provided by the user from the client"
+    )
+    // i know it's horrible, but i just don't wanna test it in swagger in any other way
+    @PostMapping("/validate/{cardNumber}/{expirationDate}/{cvv}")
+    fun validateCardData(
+        @Parameter(
+            description = "Card number to be validated",
+            example = "1234567890123456"
+        )
+        @PathVariable cardNumber: String,
+        @Parameter(
+            description = "Expiration date of the card",
+            example = "12/25"
+        )
+        @PathVariable expirationDate: String,
+        @Parameter(
+            description = "CVV code of the card",
+            example = "123"
+        )
+        @PathVariable cvv: String
+    ) = bankService.validateCard(cardNumber, expirationDate, cvv)
+
+
+}
