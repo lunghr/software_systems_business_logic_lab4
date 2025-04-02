@@ -32,23 +32,14 @@ class OrderService(
 
     private fun moveToOrder(cartId: UUID, products: List<CartProduct>, orderId: UUID) {
         val batch = cassandraTemplate.batchOps()
-
-        // Iterate through each product and create insert and delete operations
         for (item in products) {
             val orderProduct = toOrderProduct(orderId, item.key.productId, item.quantity)
             val cartProduct = toCartProduct(cartId, item.key.productId, item.quantity)
-
-            // Insert into order_products table using an entity object
             batch.insert(orderProduct)
-
-            // Delete from cart_products table using an entity object
             batch.delete(cartProduct)
         }
-
-        // Execute the batch operations
         batch.execute()
     }
-
 
 
     private fun calculateTotalPrice(productsList: List<CartProduct>): Double {
