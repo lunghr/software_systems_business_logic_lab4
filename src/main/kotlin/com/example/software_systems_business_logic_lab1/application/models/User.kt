@@ -7,8 +7,8 @@ import jakarta.persistence.Table
 import java.util.UUID
 
 @Entity
-@Table(name = "catalogs")
-class User(
+@Table(name = "users")
+data class User(
     @Id
     @Column(name = "user_id")
     val id: UUID = UUID.randomUUID(),

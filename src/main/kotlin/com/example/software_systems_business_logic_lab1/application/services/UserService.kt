@@ -12,7 +12,13 @@ class UserService(
 ) {
 
     fun createUser(userDto: UserDto): User {
-        return userRepository.save(userDto.toUser()).also { user -> cartService.createCart(user) }
+        try{
+            return userRepository.save(userDto.toUser()).also { user -> cartService.createCart(user) }
+        }
+        catch (e: Exception) {
+            throw RuntimeException("User with this email or phone already exists")
+        }
+
     }
 
     fun getUserByEmail(email: String): User? {
