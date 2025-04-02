@@ -4,6 +4,8 @@ import com.example.software_systems_business_logic_lab1.payment.bank.models.Bank
 import com.example.software_systems_business_logic_lab1.payment.bank.models.Card
 import com.example.software_systems_business_logic_lab1.payment.bank.repos.BankAccountRepository
 import com.example.software_systems_business_logic_lab1.payment.bank.repos.CardRepository
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentTransaction
 import org.springframework.stereotype.Service
 
 @Service
@@ -40,6 +42,11 @@ class BankService(
         val acc = bankAccountRepository.findAccountByCardNumber(cardNumber)
             ?: throw RuntimeException("Bank account not found for card number: $cardNumber")
         return bankAccountRepository.save(acc.copy(balance = acc.balance + amount)).balance
+    }
+
+    fun processTransaction(paymentData: OzonPaymentData, transactionAmount: Double): Boolean {
+
+        return true
     }
 
 }

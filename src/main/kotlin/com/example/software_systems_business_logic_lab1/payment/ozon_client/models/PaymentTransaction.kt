@@ -30,8 +30,11 @@ data class PaymentTransaction(
     val order: Order,
 
     @Column(name="trasaction_status")
-    val transactionStatus: TransactionStatus,
+    var transactionStatus: TransactionStatus,
 
     @Column(name="transaction_date")
     val transactionDate: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name="transaction_amount")
+    val transactionAmount: Double
 )

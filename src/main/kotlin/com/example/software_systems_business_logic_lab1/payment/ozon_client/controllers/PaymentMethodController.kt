@@ -1,5 +1,6 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.controllers
 
+import com.example.software_systems_business_logic_lab1.payment.bank.enums.PaymentType
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.services.PaymentMethodService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -42,11 +43,27 @@ class PaymentMethodController(
             description = "Type of the payment method to be added",
             example = "CARD"
         )
-
-
-    ) {
-        // Logic to add a new payment method
-    }
-
+        @RequestParam paymentType: PaymentType,
+        @Parameter(
+            description = "Card number of the payment method to be added",
+            example = "1234567890123456"
+        )
+        @RequestParam cardNumber: String,
+        @Parameter(
+            description = "Expiration date of the card",
+            example = "12/25"
+        )
+        @RequestParam expirationDate: String,
+        @Parameter(
+            description = "CVV code of the card",
+            example = "123"
+        )
+        @RequestParam cvv: String
+    ) = paymentMethodService.addNewPaymentMethod(
+        cardNumber = cardNumber,
+        cvv = cvv,
+        expiryDate = expirationDate,
+        userId = userId
+    )
 
 }

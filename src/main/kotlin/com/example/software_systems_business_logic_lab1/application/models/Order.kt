@@ -1,6 +1,6 @@
 package com.example.software_systems_business_logic_lab1.application.models
 
-import com.example.software_systems_business_logic_lab1.application.models.enums.OrderStatus
+import com.example.software_systems_business_logic_lab1.application.models.enums.OrderPaymentStatus
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -29,7 +29,7 @@ class Order(
     var createdAt: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yy")),
 
     @Column(name = "order_status")
-    var orderStatus: OrderStatus = OrderStatus.WAITING_FOR_PAYMENT,
+    var orderPaymentStatus: OrderPaymentStatus = OrderPaymentStatus.WAITING_FOR_PAYMENT,
 
     @Column(name = "total_price")
     var totalPrice: Double

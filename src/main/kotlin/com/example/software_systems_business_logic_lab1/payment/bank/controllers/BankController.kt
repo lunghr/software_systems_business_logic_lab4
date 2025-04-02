@@ -1,6 +1,7 @@
 package com.example.software_systems_business_logic_lab1.payment.bank.controllers
 
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/bank")
-@Tag(name = "Bank Controller", description = "Controller for managing bank-related operations")
+@Tag(name = "Bank Controller UTILITY CONTROLLER", description = "Controller for managing bank-related operations")
 class BankController(
     private val bankService: BankService
 ) {
@@ -75,6 +76,25 @@ class BankController(
         )
         @PathVariable amount: Double
     ) = bankService.topUpBankAccount(cardNumber, amount)
+
+
+    @Operation(
+        summary = "Process a payment transaction",
+        description = "Processes a payment transaction using the provided details"
+    )
+    @PostMapping("/process-transaction/{transactionAmount}")
+    fun processTransaction(
+        @Parameter(
+            description = "Amount of the transaction to be processed",
+            example = "100.0"
+        )
+        @PathVariable transactionAmount: Double,
+        @Parameter(
+            description = "Card data for the transaction",
+            example = "{\"id\": \"f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd\", \"cardNumber\": \"1234567890123456\", \"cvv\": \"123\", \"expirationDate\": \"12/25\" }"
+        )
+        @RequestBody cardData: OzonPaymentData
+    ) = bankService.processTransaction(cardData, transactionAmount)
 
 
 }

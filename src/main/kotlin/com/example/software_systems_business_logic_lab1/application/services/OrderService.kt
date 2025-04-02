@@ -2,7 +2,7 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.models.CartProduct
 import com.example.software_systems_business_logic_lab1.application.models.Order
-import com.example.software_systems_business_logic_lab1.application.models.OrderProduct
+import com.example.software_systems_business_logic_lab1.application.models.enums.OrderPaymentStatus
 import com.example.software_systems_business_logic_lab1.application.repos.OrderRepository
 import org.springframework.data.cassandra.core.CassandraTemplate
 import org.springframework.stereotype.Service
@@ -49,5 +49,14 @@ class OrderService(
                 product.price * cartProduct.quantity
             } ?: 0.0
         }
+    }
+
+    fun getOrderById(orderId: UUID): Order? {
+        return orderRepository.findById(orderId).orElse(null)
+    }
+
+    fun changeOrderStatus(order: Order, status: OrderPaymentStatus): Order {
+        order.orderPaymentStatus = status
+        return orderRepository.save(order)
     }
 }
