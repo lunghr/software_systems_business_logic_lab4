@@ -68,9 +68,9 @@ services:
        - SPRING_CASSANDRA_CONTACT_POINTS=cassandra
        - SPRING_CASSANDRA_PORT=9042
        - SPRING_CASSANDRA_LOCAL_DATACENTER=datacenter1
-       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-       - SPRING_DATASOURCE_USERNAME=postgres
-       - SPRING_DATASOURCE_PASSWORD=postgres
+       - DB_URL=jdbc:postgresql://postgres:5432/postgres
+       - DB_USERNAME=postgres
+       - DB_PASSWORD=postgres
     networks:
       - cassandra_network
 

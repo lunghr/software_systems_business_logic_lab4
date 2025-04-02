@@ -5,7 +5,7 @@ import com.example.software_systems_business_logic_lab1.payment.ozon_client.mode
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import jakarta.persistence.JoinTable
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
@@ -19,11 +19,11 @@ data class PaymentTransaction(
     val id: UUID = UUID.randomUUID(),
 
     @ManyToOne
-    @JoinTable(name = "payment_method_id")
+    @JoinColumn(name = "payment_method_id")
     val paymentMethod: PaymentMethod,
 
     @OneToOne
-    @JoinTable(name = "order_id")
+    @JoinColumn(name = "order_id")
     val order: Order,
 
     @Column(name="trasaction_status")

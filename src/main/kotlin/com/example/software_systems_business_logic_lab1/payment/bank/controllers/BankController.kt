@@ -39,7 +39,7 @@ class BankController(
         description = "Validates the card data provided by the user from the client"
     )
     // i know it's horrible, but i just don't wanna test it in swagger in any other way
-    @PostMapping("/validate/{cardNumber}/{expirationDate}/{cvv}")
+    @PostMapping("/validate/{cardNumber}/{cvv}")
     fun validateCardData(
         @Parameter(
             description = "Card number to be validated",
@@ -50,13 +50,31 @@ class BankController(
             description = "Expiration date of the card",
             example = "12/25"
         )
-        @PathVariable expirationDate: String,
+        @RequestBody expirationDate: String,
         @Parameter(
             description = "CVV code of the card",
             example = "123"
         )
         @PathVariable cvv: String
     ) = bankService.validateCard(cardNumber, expirationDate, cvv)
+
+    @Operation(
+        summary = "Top up account balance",
+        description = "Tops up the balance of the specified bank account by card number"
+    )
+    @PostMapping("/top-up/{cardNumber}/{amount}")
+    fun topUpBalance(
+        @Parameter(
+            description = "Card number used for topping up the account",
+            example = "885351475761580881"
+        )
+        @PathVariable cardNumber: String,
+        @Parameter(
+            description = "Amount to top up the account",
+            example = "100.0"
+        )
+        @PathVariable amount: Double
+    ) = bankService.topUpBankAccount(cardNumber, amount)
 
 
 }

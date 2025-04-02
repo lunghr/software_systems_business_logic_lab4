@@ -36,4 +36,10 @@ class BankService(
         } ?: false
     }
 
+    fun topUpBankAccount(cardNumber: String, amount: Double): Double {
+        val acc = bankAccountRepository.findAccountByCardNumber(cardNumber)
+            ?: throw RuntimeException("Bank account not found for card number: $cardNumber")
+        return bankAccountRepository.save(acc.copy(balance = acc.balance + amount)).balance
+    }
+
 }

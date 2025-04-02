@@ -1,5 +1,6 @@
 package com.example.software_systems_business_logic_lab1.payment.bank.models
 
+import com.example.software_systems_business_logic_lab1.payment.bank.enums.PaymentType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -14,4 +15,6 @@ data class BankAccount(
     val accountNumber: String = String.format("%019d", kotlin.random.Random.nextLong(0, 1000000000000000000L)),
     @Column(name = "balance")
     var balance: Double = 0.0,
+    @Column(name = "payment_type")
+    val paymentType: PaymentType = PaymentType.CARD,
 )
