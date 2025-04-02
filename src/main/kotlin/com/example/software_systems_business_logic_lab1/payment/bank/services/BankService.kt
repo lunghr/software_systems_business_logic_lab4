@@ -6,6 +6,8 @@ import com.example.software_systems_business_logic_lab1.payment.bank.repos.BankA
 import com.example.software_systems_business_logic_lab1.payment.bank.repos.CardRepository
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentTransaction
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.enums.TransactionStatus
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -44,9 +46,23 @@ class BankService(
         return bankAccountRepository.save(acc.copy(balance = acc.balance + amount)).balance
     }
 
-    fun processTransaction(paymentData: OzonPaymentData, transactionAmount: Double): Boolean {
-
-        return true
+    @Transactional
+    fun processTransaction(paymentData: OzonPaymentData, transactionAmount: Double): TransactionStatus {
+        require(
+            validateCard(
+                paymentData.cardNumber,
+                paymentData.expirationDate,
+                paymentData.cvv
+            )
+        ) { "Invalid card details" }
+        val bankAccount = bankAccountRepository.findAccountByCardNumber(paymentData.cardNumber)
+            ?: throw RuntimeException("Bank account not found for card number: ${paymentData.cardNumber}")
+        if (bankAccount.balance < transactionAmount) {
+            return TransactionStatus.FAILED
+        }
+        bankAccount.balance -= transactionAmount
+        bankAccountRepository.save(bankAccount)
+        return TransactionStatus.COMPLETED
     }
 
 }

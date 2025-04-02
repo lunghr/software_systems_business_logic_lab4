@@ -33,7 +33,7 @@ class TransactionService(
         val paymentMethod = paymentMethodService.getPaymentMethodById(paymentMethodId)
             ?: throw IllegalArgumentException("Payment method not found")
 
-        var order = orderService.getOrderById(orderId)
+        val order = orderService.getOrderById(orderId)
             ?: throw IllegalArgumentException("Order not found")
 
         val transaction = transactionRepository.save(
