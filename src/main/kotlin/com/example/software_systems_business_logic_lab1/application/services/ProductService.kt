@@ -42,4 +42,9 @@ class ProductService(
     fun isExists(productId: UUID): Boolean {
         return productRepository.findProductByKeyProductId(productId)?.let { true } ?: false
     }
+
+    fun getProductsByUUIds(productIds: List<UUID>): List<Product> {
+        return productRepository.findProductsByIds(productIds)
+    }
+
 }

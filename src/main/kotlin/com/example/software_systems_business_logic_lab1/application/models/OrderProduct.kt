@@ -8,8 +8,5 @@ import java.util.UUID
 @Table("order_products")
 data class OrderProduct(
     @PrimaryKey val key: OrderProductKey,
-    val orderId: UUID,
-    val productId: UUID,
     val quantity: Int
-
 )

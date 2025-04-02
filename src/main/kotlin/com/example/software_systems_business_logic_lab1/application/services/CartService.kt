@@ -72,4 +72,14 @@ class CartService(
             )
         }
     }
+
+    fun getValidCartProductUUIDs(cartId: UUID): List<UUID> {
+        return cartProductRepository.findByKeyCartId(cartId).map { it.key.productId }
+            .filter { productService.isAvailableToOrder(it, 1) }
+    }
+
+    fun getUser(cartId: UUID): User {
+        return cartRepository.findCartById(cartId)?.user
+            ?: throw IllegalArgumentException("Cart with id $cartId does not exist")
+    }
 }

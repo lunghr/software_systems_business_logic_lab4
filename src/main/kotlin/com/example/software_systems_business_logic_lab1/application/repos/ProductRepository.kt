@@ -18,4 +18,10 @@ interface ProductRepository : CassandraRepository<Product, ProductSubcatalogKey>
     @Query("UPDATE products SET stockquantity = ?2 WHERE product_id = ?0 AND subcatalog_name = ?1 IF EXISTS")
     fun changeStockQuantity(productId: UUID, subcatalogName: String, quantity: Int): Boolean
 
+    @Query("SELECT * FROM products WHERE product_id IN :productIds ALLOW FILTERING")
+    fun findProductsByIds(productIds: List<UUID>): List<Product>
+
+
+
+
 }
