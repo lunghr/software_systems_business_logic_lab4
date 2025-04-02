@@ -7,4 +7,5 @@ import java.util.UUID
 interface UserRepository: JpaRepository<User, UUID> {
     fun findByEmail(email: String): User?
     fun findByPhoneNumber(phone: String): User?
+    fun findUserById(id: UUID): User?
 }

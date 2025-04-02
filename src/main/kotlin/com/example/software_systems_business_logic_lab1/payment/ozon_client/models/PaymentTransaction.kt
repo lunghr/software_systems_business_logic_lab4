@@ -2,6 +2,7 @@ package com.example.software_systems_business_logic_lab1.payment.ozon_client.mod
 
 import com.example.software_systems_business_logic_lab1.application.models.Order
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.enums.TransactionStatus
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -20,10 +21,12 @@ data class PaymentTransaction(
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id")
+    @JsonBackReference
     val paymentMethod: PaymentMethod,
 
     @OneToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     val order: Order,
 
     @Column(name="trasaction_status")
