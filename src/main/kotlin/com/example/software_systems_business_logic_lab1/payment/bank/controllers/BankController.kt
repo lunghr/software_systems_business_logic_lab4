@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -82,19 +83,19 @@ class BankController(
         summary = "Process a payment transaction",
         description = "Processes a payment transaction using the provided details"
     )
-    @PostMapping("/process-transaction/{transactionAmount}")
+    @PostMapping("/process-transaction")
     fun processTransaction(
         @Parameter(
             description = "Amount of the transaction to be processed",
             example = "100.0"
         )
-        @PathVariable transactionAmount: Double,
+        @RequestParam transactionAmount: String,
         @Parameter(
             description = "Card data for the transaction",
             example = "{\"id\": \"f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd\", \"cardNumber\": \"1234567890123456\", \"cvv\": \"123\", \"expirationDate\": \"12/25\" }"
         )
         @RequestBody cardData: OzonPaymentData
-    ) = bankService.processTransaction(cardData, transactionAmount)
+    ) = bankService.processTransaction(cardData, transactionAmount.toDouble())
 
 
 }

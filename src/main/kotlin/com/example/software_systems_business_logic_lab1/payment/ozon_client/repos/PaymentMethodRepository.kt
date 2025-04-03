@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface PaymentMethodRepository: JpaRepository<PaymentMethod, UUID> {
+    fun findAllByUserId(userId: UUID): List<PaymentMethod>
 }

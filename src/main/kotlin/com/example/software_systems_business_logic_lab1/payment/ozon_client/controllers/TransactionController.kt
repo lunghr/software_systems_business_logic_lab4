@@ -1,9 +1,11 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.controllers
 
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.PaymentTransactionRepository
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.services.TransactionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
@@ -12,14 +14,15 @@ import java.util.*
 @RestController
 @RequestMapping("/transaction")
 class TransactionController(
-    private val transactionRepository: PaymentTransactionRepository
+    private val transactionRepository: PaymentTransactionRepository,
+    private val transactionService: TransactionService
 ) {
 
     @Operation(
         summary = "Process a payment transaction",
         description = "Processes a payment transaction using the provided details"
     )
-    @RequestMapping("/process/{orderId}/{paymentMethodId}")
+    @PostMapping("/process/{orderId}/{paymentMethodId}")
     fun processTransaction(
         @Parameter(
             description = "ID of the order for which the transaction is being processed",
@@ -31,8 +34,8 @@ class TransactionController(
             example = "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
         )
         @PathVariable paymentMethodId: UUID
-    ) {
-
-        // Implement transaction processing logic here
-    }
+    ) = transactionService.processTransaction(
+        paymentMethodId = paymentMethodId,
+        orderId = orderId
+    )
 }
