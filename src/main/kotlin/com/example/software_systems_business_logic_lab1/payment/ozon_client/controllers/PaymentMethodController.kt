@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.RestTemplate
 import java.util.UUID
 
 
@@ -14,7 +13,6 @@ import java.util.UUID
 @RequestMapping("/payment")
 @Tag(name = "Payment Method Controller", description = "Controller for managing payment methods")
 class PaymentMethodController(
-    private val restTemplate: RestTemplate,
     private val paymentMethodService: PaymentMethodService
 ) {
 
