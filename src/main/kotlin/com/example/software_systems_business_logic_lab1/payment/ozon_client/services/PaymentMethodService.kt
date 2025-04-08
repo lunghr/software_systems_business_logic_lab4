@@ -23,7 +23,8 @@ class PaymentMethodService(
 ) {
 
     fun getPaymentMethodsByUserId(userId: UUID): List<PaymentMethod> {
-        return paymentMethodRepository.findAll().filter { it.user.id == userId }
+        println(userId)
+        return paymentMethodRepository.findAllByUserId(userId)
     }
 
     @Transactional

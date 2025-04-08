@@ -31,6 +31,14 @@ class BankService(
         }
 
     fun validateCard(cardNumber: String, expirationDate: String, cvv: String): Boolean {
+        val card = cardRepository.findByCardDetails(
+            cardNumber = cardNumber,
+            expirationDate = expirationDate,
+            cvv = cvv
+        ) ?: throw RuntimeException("Card not found")
+        println(card.cardNumber)
+        println(card.expirationDate)
+        println(card.cvv)
         return cardRepository.findByCardDetails(
             cardNumber = cardNumber,
             expirationDate = expirationDate,
@@ -48,13 +56,11 @@ class BankService(
 
     @Transactional
     fun processTransaction(paymentData: OzonPaymentData, transactionAmount: Double): TransactionStatus {
-        require(
-            validateCard(
-                paymentData.cardNumber,
-                paymentData.expirationDate,
-                paymentData.cvv
-            )
-        ) { "Invalid card details" }
+        println(transactionAmount)
+        println(paymentData.cardNumber)
+        println(paymentData.expirationDate)
+        println(paymentData.cvv)
+
         val bankAccount = bankAccountRepository.findAccountByCardNumber(paymentData.cardNumber)
             ?: throw RuntimeException("Bank account not found for card number: ${paymentData.cardNumber}")
         if (bankAccount.balance < transactionAmount) {

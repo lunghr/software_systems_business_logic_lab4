@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -35,11 +36,16 @@ class BankController(
         @PathVariable amount: Double
     ) = bankService.topUpBankAccount(cardNumber, amount)
 
-    @PostMapping("/process-transaction/{transactionAmount}")
+
+    @PostMapping("/process-transaction")
     fun processTransaction(
-        @PathVariable transactionAmount: Double,
+        @Parameter(
+            description = "Amount of the transaction to be processed",
+            example = "100.0"
+        )
+        @RequestParam transactionAmount: String,
         @RequestBody cardData: OzonPaymentData
-    ) = bankService.processTransaction(cardData, transactionAmount)
+    ) = bankService.processTransaction(cardData, transactionAmount.toDouble())
 
 
 }

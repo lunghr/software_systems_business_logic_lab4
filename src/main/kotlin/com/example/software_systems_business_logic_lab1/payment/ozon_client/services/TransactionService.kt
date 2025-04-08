@@ -19,7 +19,7 @@ class TransactionService(
     private val orderService: OrderService,
     private val restTemplate: RestTemplate
 ) {
-//    private fun createTransaction(paymentMethod: PaymentMethod, order: Order): PaymentTransaction {
+    //    private fun createTransaction(paymentMethod: PaymentMethod, order: Order): PaymentTransaction {
 //        return transactionRepository.save(
 //            toTransaction(
 //                paymentMethod = paymentMethod,
@@ -44,10 +44,16 @@ class TransactionService(
             )
         )
 
-        val bankPaymentUrl = "http://localhost:8080/bank/pay/${transaction.transactionAmount}"
+        println("Payment method: $paymentMethod")
+        println("Order: $order")
+        println("OzonPaymentData: ${paymentMethod.ozonPaymentData}")
+
+
+        val bankPaymentUrl = "http://localhost:8080/bank/process-transaction"
 
         val status = restTemplate.postForObject(
-            bankPaymentUrl, paymentMethod.ozonPaymentData,
+            "$bankPaymentUrl?transactionAmount=${transaction.transactionAmount}",
+            paymentMethod.ozonPaymentData,
             TransactionStatus::class.java
         ) ?: throw RuntimeException("Failed to process payment")
 
