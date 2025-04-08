@@ -19,7 +19,7 @@ data class ProductDto(
             price = price,
             stockQuantity = stockQuantity,
             key = ProductCategoryKey(
-                categoryID = categoryId,
+                categoryId = categoryId,
             )
         )
     }

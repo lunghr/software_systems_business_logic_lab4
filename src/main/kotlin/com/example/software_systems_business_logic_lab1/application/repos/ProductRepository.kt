@@ -7,7 +7,7 @@ import org.springframework.data.cassandra.repository.Query
 import java.util.UUID
 
 interface ProductRepository : CassandraRepository<Product, ProductCategoryKey> {
-    fun findByKeyCategoryID(categoryID: UUID): List<Product>
+    fun findByKeyCategoryId(categoryID: UUID): List<Product>
 
     @Query("SELECT * FROM products WHERE product_id = ?0 ALLOW FILTERING")
     fun findProductByKeyProductId(productId: UUID): Product?
@@ -21,7 +21,7 @@ interface ProductRepository : CassandraRepository<Product, ProductCategoryKey> {
     @Query("SELECT * FROM products WHERE product_id IN :productIds ALLOW FILTERING")
     fun findProductsByIds(productIds: List<UUID>): List<Product>
 
-    fun findProductsByKeyCategoryID(categoryID: UUID): List<Product>
+    fun findProductsByKeyCategoryId(categoryID: UUID): List<Product>
 
 
 

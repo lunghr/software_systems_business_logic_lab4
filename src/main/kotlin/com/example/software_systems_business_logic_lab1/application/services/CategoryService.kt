@@ -42,7 +42,7 @@ class CategoryService(
     fun getProductsByCategory(categoryName: String): List<Product> =
         categoryRepository.findByKeyName(categoryName)?.let { category ->
             category.takeIf { it.isParent }
-                ?.let { productRepository.findProductsByKeyCategoryID(category.key.id) }
+                ?.let { productRepository.findProductsByKeyCategoryId(category.key.id) }
                 ?: throw CategoryIsNotParentException(categoryName)
         } ?: throw CategoryNotFoundException(categoryName)
 

@@ -12,5 +12,5 @@ data class ProductCategoryKey(
     val productId: UUID = UUID.randomUUID(),
 
     @PrimaryKeyColumn(name = "category_id", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
-    val categoryID: UUID
+    val categoryId: UUID
 )
