@@ -6,11 +6,11 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn
 import java.util.UUID
 
 @PrimaryKeyClass
-data class ProductSubcatalogKey(
+data class ProductCategoryKey(
 
     @PrimaryKeyColumn(name = "product_id", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
     val productId: UUID = UUID.randomUUID(),
 
-    @PrimaryKeyColumn(name = "subcatalog_name", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
-    val subcatalogName: String
+    @PrimaryKeyColumn(name = "category_id", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
+    val categoryID: UUID
 )

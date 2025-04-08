@@ -2,17 +2,15 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.models.*
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.CartProductKey
-import com.example.software_systems_business_logic_lab1.application.models.key_classes.CatalogSubcatalogKey
+import com.example.software_systems_business_logic_lab1.application.models.key_classes.CategoryKey
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.OrderProductKey
-import jakarta.persistence.Id
 import java.util.UUID
 
-fun toSubcatalog(catalogName: String, subcatalogName: String): Subcatalog {
-    return Subcatalog(
-        key = CatalogSubcatalogKey(
-            subcatalogName = subcatalogName,
-            catalogName = catalogName
-        )
+fun toCategory(name: String, parentName: String? = null): Category {
+    return Category(
+        key = CategoryKey(name = name),
+        parentName = parentName,
+        isParent = true
     )
 }
 

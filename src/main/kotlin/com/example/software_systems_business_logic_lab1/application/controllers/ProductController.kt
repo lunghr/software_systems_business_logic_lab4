@@ -28,16 +28,15 @@ class ProductController(
     fun changeProductStockQuantity(
         @PathVariable productId: UUID,
         @PathVariable quantity: Int,
-        @RequestBody subcatalogName: String
-    ) = productService.changeProductStockQuantity(productId, subcatalogName, quantity)
+        @RequestBody categoryId:UUID
+    ) = productService.changeProductStockQuantity(productId, categoryId, quantity)
 
     @PostMapping("/quantity/{productId}/reduce/{quantity}")
     fun reduceProductStockQuantity(
-
         @PathVariable productId: UUID,
-        @RequestBody subcatalogName: String,
+        @RequestBody categoryId: UUID,
         @PathVariable quantity: Int
-    ) = productService.reduceProductStockQuantity(productId, subcatalogName, quantity)
+    ) = productService.reduceProductStockQuantity(productId, categoryId, quantity)
 
 
 }

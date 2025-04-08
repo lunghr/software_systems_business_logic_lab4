@@ -1,50 +1,48 @@
 package com.example.software_systems_business_logic_lab1.application.controllers
 
-import com.example.software_systems_business_logic_lab1.application.models.Catalog
+import com.example.software_systems_business_logic_lab1.application.models.Category
 import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.models.Subcatalog
-import com.example.software_systems_business_logic_lab1.application.services.CatalogService
+import com.example.software_systems_business_logic_lab1.application.services.CategoryService
 import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/catalog")
+@RequestMapping("/category")
 class CatalogController(
-    private val catalogService: CatalogService,
+    private val categoryService: CategoryService,
 ) {
 
-    @PostMapping("/create/{catalogName}")
-    fun createCatalog(
-        @PathVariable catalogName: String
-    ): Catalog {
-        return catalogService.createCatalog(catalogName)
+    @PostMapping("/create/{categoryName}")
+    fun createParentCategory(
+        @PathVariable categoryName: String
+    ): Category {
+        return categoryService.createPaternalCategory(categoryName)
     }
 
-    @PostMapping("/create/{catalogName}/{subcatalogName}")
-    fun createSubcatalog(
-        @PathVariable catalogName: String,
-        @PathVariable subcatalogName: String
-    ): Subcatalog =
-        catalogService.createSubcatalog(catalogName, subcatalogName)
+    @PostMapping("/create/{parentCategoryName}/{childCategoryName}")
+    fun createChildCategory(
+        @PathVariable parentCategoryName: String,
+        @PathVariable childCategoryName: String
+    ): Category =
+        categoryService.createChildCategory(parentCategoryName, childCategoryName)
 
-    @GetMapping("/get/catalogs")
-    fun getCatalogs(): List<String> {
-        return catalogService.getCatalogs().map { it.name }
+    @GetMapping("/get")
+    fun getParentCategories(): List<String> {
+        return categoryService.getParentCategories().map { it.key.name }
     }
 
-    @GetMapping("/get/catalogs/{catalogName}/subcatalogs")
-    fun getSubcatalogs(
-        @PathVariable catalogName: String
+    @GetMapping("/get/{categoryName}")
+    fun getChildCategories(
+        @PathVariable categoryName: String
     ): List<String> {
-        return catalogService.getSubcatalogsByCatalog(catalogName).map { it.key.subcatalogName }
+        return categoryService.getChildrenOfCategory(categoryName).map { it.key.name }
     }
 
-    @GetMapping("/get/catalogs/{catalogName}/subcatalogs/{subcatalogName}/products")
+    @GetMapping("/get/categories/{categoryName}/products")
     fun getProducts(
-        @PathVariable catalogName: String,
-        @PathVariable subcatalogName: String
+        @PathVariable categoryName: String
     ): List<Product> {
-        return catalogService.getProductsBySubcatalog(subcatalogName)
+        return categoryService.getProductsByCategory(categoryName)
     }
 
 }

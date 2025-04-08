@@ -1,7 +1,8 @@
 package com.example.software_systems_business_logic_lab1.application.dto
 
 import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.models.key_classes.ProductSubcatalogKey
+import com.example.software_systems_business_logic_lab1.application.models.key_classes.ProductCategoryKey
+import java.util.UUID
 
 
 data class ProductDto(
@@ -9,7 +10,7 @@ data class ProductDto(
     val description: String,
     val price: Double,
     val stockQuantity: Int,
-    val subcatalogName: String,
+    val categoryId: UUID,
 ) {
     fun toProduct(): Product {
         return Product(
@@ -17,8 +18,8 @@ data class ProductDto(
             description = description,
             price = price,
             stockQuantity = stockQuantity,
-            key = ProductSubcatalogKey(
-                subcatalogName = subcatalogName
+            key = ProductCategoryKey(
+                categoryID = categoryId,
             )
         )
     }

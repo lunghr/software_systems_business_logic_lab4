@@ -35,7 +35,7 @@ class CartController(
         @PathVariable cartId: UUID,
         @PathVariable productId: UUID
     ) = cartService.incrementProductQuantity(cartId, productId)
-  
+
     @PostMapping("/add/{cartId}/{productId}")
     fun addProductToCart(
         @PathVariable cartId: UUID,
