@@ -2,6 +2,7 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.dto.UserDto
 import com.example.software_systems_business_logic_lab1.application.models.User
+import com.example.software_systems_business_logic_lab1.application.models.UserAlreadyExistsException
 import com.example.software_systems_business_logic_lab1.application.repos.UserRepository
 import org.springframework.stereotype.Service
 
@@ -12,11 +13,10 @@ class UserService(
 ) {
 
     fun createUser(userDto: UserDto): User {
-        try{
+        try {
             return userRepository.save(userDto.toUser()).also { user -> cartService.createCart(user) }
-        }
-        catch (e: Exception) {
-            throw RuntimeException("User with this email or phone already exists")
+        } catch (e: Exception) {
+            throw UserAlreadyExistsException()
         }
 
     }

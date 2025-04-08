@@ -1,10 +1,10 @@
 package com.example.software_systems_business_logic_lab1.application.services
 
-import com.example.software_systems_business_logic_lab1.application.models.Cart
-import com.example.software_systems_business_logic_lab1.application.models.CartProduct
-import com.example.software_systems_business_logic_lab1.application.models.User
+import com.example.software_systems_business_logic_lab1.application.models.*
 import com.example.software_systems_business_logic_lab1.application.repos.CartProductRepository
 import com.example.software_systems_business_logic_lab1.application.repos.CartRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -28,43 +28,43 @@ class CartService(
                             1
                         )
             }
-                ?: throw IllegalArgumentException("Product with id $productId already exists in cart or does not exist or out of stock")
-        } ?: throw IllegalArgumentException("Cart with id $cartId does not exist")
+                ?: throw ProductNotFoundException()
+        } ?: throw CartNotFoundException()
     }
 
-    //TODO add check of amount of product in stock like quantity + 1 <= stock_quantity
-    fun incrementProductQuantity(cartId: UUID, productId: UUID): CartProduct {
+    fun incrementProductQuantity(cartId: UUID, productId: UUID): ResponseEntity<Any> {
         return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
-            cartProductRepository.save(
-                cartProduct.copy(quantity = cartProduct.quantity + 1)
-                    .takeIf { productService.isAvailableToOrder(productId, 1) }
-                    ?: throw IllegalArgumentException("Product is out of stock")
-            )
-        } ?: throw IllegalArgumentException("Product with id $productId does not exist in cart with id $cartId")
-
-    }
-
-    fun decrementProductQuantity(cartId: UUID, productId: UUID): Int {
-        return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
-            cartProductRepository.save(cartProduct.copy(quantity = cartProduct.quantity - 1)).quantity.takeIf {
-                it > 0
-            } ?: run {
-                cartProductRepository.delete(cartProduct)
-                0
+            if (productService.isAvailableToOrder(productId, 1)) {
+                cartProductRepository.updateQuantity(cartProduct.quantity + 1, cartId, productId)
+                ResponseEntity.status(204).build<Any>()
+            } else {
+                throw OutOfStockException()
             }
-        } ?: throw IllegalArgumentException("Product with id $productId does not exist in cart with id $cartId")
+        } ?: throw ProductNotFoundException()
 
+    }
+
+    fun decrementProductQuantity(cartId: UUID, productId: UUID): ResponseEntity<Any> {
+        return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
+            if (cartProduct.quantity > 1) {
+                cartProductRepository.updateQuantity(cartProduct.quantity - 1, cartId, productId)
+                ResponseEntity.status(204).build()
+            } else {
+                cartProductRepository.delete(cartProduct)
+                ResponseEntity.status(204).build()
+            }
+        } ?: throw ProductNotFoundException()
     }
 
     fun deleteProductFromCart(cartId: UUID, productId: UUID): CartProduct {
         return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
             cartProductRepository.delete(cartProduct)
             cartProduct
-        } ?: throw IllegalArgumentException("Product with id $productId does not exist in cart with id $cartId")
+        } ?: throw ProductNotFoundException()
     }
 
     fun getCart(cartId: UUID): List<CartProduct> {
-        require(cartRepository.existsById(cartId)) { "Cart with id $cartId does not exist" }
+        require(cartRepository.existsById(cartId)) { throw CartNotFoundException() }
         val cart = cartProductRepository.findByKeyCartId(cartId)
         return cart.map {
             it.takeIf { productService.isAvailableToOrder(it.key.productId, it.quantity) } ?: it.copy(
@@ -80,6 +80,6 @@ class CartService(
 
     fun getUser(cartId: UUID): User {
         return cartRepository.findCartById(cartId)?.user
-            ?: throw IllegalArgumentException("Cart with id $cartId does not exist")
+            ?: throw CartNotFoundException()
     }
 }

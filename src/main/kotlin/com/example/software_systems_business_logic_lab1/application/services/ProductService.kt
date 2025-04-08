@@ -4,6 +4,7 @@ import com.example.software_systems_business_logic_lab1.application.dto.ProductD
 import com.example.software_systems_business_logic_lab1.application.models.CategoryIsParentException
 import com.example.software_systems_business_logic_lab1.application.models.CategoryNotFoundException
 import com.example.software_systems_business_logic_lab1.application.models.Product
+import com.example.software_systems_business_logic_lab1.application.models.ProductNotFoundException
 import com.example.software_systems_business_logic_lab1.application.repos.CategoryRepository
 import com.example.software_systems_business_logic_lab1.application.repos.ProductRepository
 import org.springframework.stereotype.Service
@@ -27,7 +28,7 @@ class ProductService(
     fun isAvailableToOrder(productId: UUID, quantity: Int): Boolean {
         return productRepository.findProductByKeyProductId(productId)?.let {
             it.stockQuantity > 0 && (it.stockQuantity - quantity) >= 0
-        } ?: throw IllegalArgumentException("Product with id $productId does not exist")
+        } ?: throw ProductNotFoundException()
     }
 
     fun changeProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {

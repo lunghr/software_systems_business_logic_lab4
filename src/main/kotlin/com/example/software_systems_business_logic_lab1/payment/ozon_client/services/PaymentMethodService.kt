@@ -1,5 +1,7 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.services
 
+import com.example.software_systems_business_logic_lab1.application.models.InvalidCardDataException
+import com.example.software_systems_business_logic_lab1.application.models.UserNotFoundException
 import com.example.software_systems_business_logic_lab1.application.repos.UserRepository
 import com.example.software_systems_business_logic_lab1.payment.bank.models.enums.PaymentType
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
@@ -27,12 +29,12 @@ class PaymentMethodService(
     @Transactional
     fun addNewPaymentMethod(cardNumber: String, cvv: String, expiryDate: String, userId: UUID): PaymentMethod {
         val user = userRepository.findUserById(userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw UserNotFoundException()
 
         val isValid = bankService.validateCard(cardNumber, expiryDate, cvv)
 
         if (!isValid) {
-            throw IllegalArgumentException("Card data is invalid")
+            throw InvalidCardDataException()
         }
         val savedOzonPaymentData = ozonPaymentDataRepository.save(toOzonPaymentData(cardNumber, expiryDate, cvv))
         return paymentMethodRepository.save(toPaymentMethod(user, savedOzonPaymentData, PaymentType.CARD))

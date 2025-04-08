@@ -1,5 +1,7 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.services
 
+import com.example.software_systems_business_logic_lab1.application.models.OrderNotFoundException
+import com.example.software_systems_business_logic_lab1.application.models.PaymentMethodNotFoundException
 import com.example.software_systems_business_logic_lab1.application.models.enums.OrderPaymentStatus
 import com.example.software_systems_business_logic_lab1.application.services.OrderService
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
@@ -22,10 +24,10 @@ class TransactionService(
     @Transactional
     fun processTransaction(paymentMethodId: UUID, orderId: UUID): PaymentTransaction {
         val paymentMethod = paymentMethodService.getPaymentMethodById(paymentMethodId)
-            ?: throw IllegalArgumentException("Payment method not found")
+            ?: throw PaymentMethodNotFoundException()
 
         val order = orderService.getOrderById(orderId)
-            ?: throw IllegalArgumentException("Order not found")
+            ?: throw OrderNotFoundException()
 
         val transaction = transactionRepository.save(
             toTransaction(

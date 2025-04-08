@@ -2,6 +2,7 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.models.CartProduct
 import com.example.software_systems_business_logic_lab1.application.models.Order
+import com.example.software_systems_business_logic_lab1.application.models.ProductNotFoundException
 import com.example.software_systems_business_logic_lab1.application.models.enums.OrderPaymentStatus
 import com.example.software_systems_business_logic_lab1.application.repos.OrderRepository
 import org.springframework.data.cassandra.core.CassandraTemplate
@@ -19,7 +20,7 @@ class OrderService(
         products.forEach { println(it) }
         val cart = getOnlyValidProducts(cartService.getCart(cartId))
         val productsUUIDs = getListOfUUIDs(cart)
-        require(products.all { it in productsUUIDs }) { "Some products in your cart are not available to order" }
+        require(products.all { it in productsUUIDs }) { throw ProductNotFoundException() }
 
         val orderProductsList = cart.filter { it.key.productId in products }
         val order = toOrder(cartService.getUser(cartId)).also {
