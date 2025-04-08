@@ -1,6 +1,6 @@
 package com.example.software_systems_business_logic_lab1.payment.bank.models
 
-import com.example.software_systems_business_logic_lab1.payment.bank.enums.PaymentType
+import com.example.software_systems_business_logic_lab1.payment.bank.models.enums.PaymentType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
