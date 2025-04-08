@@ -17,22 +17,9 @@ class TransactionController(
     private val transactionRepository: PaymentTransactionRepository,
     private val transactionService: TransactionService
 ) {
-
-    @Operation(
-        summary = "Process a payment transaction",
-        description = "Processes a payment transaction using the provided details"
-    )
     @PostMapping("/process/{orderId}/{paymentMethodId}")
     fun processTransaction(
-        @Parameter(
-            description = "ID of the order for which the transaction is being processed",
-            example = "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
-        )
         @PathVariable orderId: UUID,
-        @Parameter(
-            description = "ID of the payment method being used for the transaction",
-            example = "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
-        )
         @PathVariable paymentMethodId: UUID
     ) = transactionService.processTransaction(
         paymentMethodId = paymentMethodId,

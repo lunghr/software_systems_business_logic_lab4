@@ -2,7 +2,7 @@ package com.example.software_systems_business_logic_lab1.payment.ozon_client.ser
 
 import com.example.software_systems_business_logic_lab1.application.models.Order
 import com.example.software_systems_business_logic_lab1.application.models.User
-import com.example.software_systems_business_logic_lab1.payment.bank.enums.PaymentType
+import com.example.software_systems_business_logic_lab1.payment.bank.models.enums.PaymentType
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentMethod
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentTransaction

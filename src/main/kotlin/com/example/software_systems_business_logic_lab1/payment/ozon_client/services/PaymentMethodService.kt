@@ -1,7 +1,7 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.services
 
 import com.example.software_systems_business_logic_lab1.application.repos.UserRepository
-import com.example.software_systems_business_logic_lab1.payment.bank.enums.PaymentType
+import com.example.software_systems_business_logic_lab1.payment.bank.models.enums.PaymentType
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentMethod
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.OzonPaymentDataRepository

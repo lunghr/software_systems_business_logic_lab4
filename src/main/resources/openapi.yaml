@@ -1,0 +1,535 @@
+openapi: 3.0.1
+info:
+  title: Cart API
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:8080'
+
+paths:
+
+#Cart
+  /cart/get/{cartId}:
+    get:
+      summary: Get cart by id
+      operationId: getCart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+      responses:
+        '200':
+          description: Cart found
+
+  /cart/delete/{cartId}/{productId}:
+    delete:
+      summary: Delete product from cart
+      description: Deletes product from cart by id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+      responses:
+        '200':
+          description: Cart deleted
+
+  /cart/decrement/{cartId}/{productId}:
+    patch:
+      summary: Decrements product in cart
+      description: Decrements product in cart by id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+      responses:
+        '200':
+          description: Product incremented
+
+  /cart/increment/{cartId}/{productId}:
+    patch:
+      summary: Increments product in cart
+      description: Increments product in cart by id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+      responses:
+        '200':
+          description: Product incremented
+  
+  /cart/add/{cartId}/{productId}:
+    post:
+      summary: Add product to cart
+      description: Adds product to cart by id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+      responses:
+        '200':
+          description: Product added
+
+# OrderController
+  /order/create/{cartId}:
+    post:
+      summary: "Create order"
+      description: "Creates order by cart id with chosen products from cart"
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+      requestBody:
+        required: true
+        description: "List of product UUIDs"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example:
+                - "e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f"
+                - "9c1e8a0e-3b4f-4f5e-8b1c-6d5f8a0e3b4f"
+      responses:
+        '200':
+          description: "Order created successfully"
+
+# CatalogController
+  /catalog/create/{catalogName}:
+    post:
+      summary: "Create a new catalog"
+      description: "Creates a new catalog if it does not already exist"
+      parameters:
+        - name: catalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "clothes"
+      responses:
+        '200':
+          description: "Catalog created"
+
+  /catalog/create/{catalogName}/{subcatalogName}:
+    post:
+      summary: "Create a new subcatalog"
+      description: "Creates a new subcatalog under the given catalog"
+      parameters:
+        - name: catalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "clothes"
+        - name: subcatalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "shoes"
+      responses:
+        '200':
+          description: "Subcatalog created"
+
+  /catalog/get/catalogs:
+    get:
+      summary: "Get all catalogs"
+      description: "Returns a list of all catalogs"
+      responses:
+        '200':
+          description: "List of catalogs"
+
+  /catalog/get/catalogs/{catalogName}/subcatalogs:
+    get:
+      summary: "Get all subcatalogs of a catalog"
+      description: "Returns all subcatalogs under the specified catalog"
+      parameters:
+        - name: catalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "clothes"
+      responses:
+        '200':
+          description: "List of subcatalogs"
+
+  /catalog/get/catalogs/{catalogName}/subcatalogs/{subcatalogName}/products:
+    get:
+      summary: "Get products in subcatalog"
+      description: "Returns all products in the specified subcatalog"
+      parameters:
+        - name: catalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "clothes"
+        - name: subcatalogName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "shoes"
+      responses:
+        '200':
+          description: "List of products"
+
+# ProductController
+  /product/create:
+    post:
+      summary: "Create a new product"
+      description: "Creates a new product with the given details"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductDto"
+      responses:
+        '200':
+          description: "Product created"
+
+  /product/quantity/{productId}/change/{quantity}:
+    post:
+      summary: "Change product stock quantity"
+      description: "Changes the stock quantity of a product by id"
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "08150d93-1da7-41e8-b140-2a9341b60f6e"
+        - name: quantity
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 10
+      requestBody:
+        required: true
+        description: "Name of the subcatalog"
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "shoes"
+      responses:
+        '200':
+          description: "Product stock updated"
+
+  /product/quantity/{productId}/reduce/{quantity}:
+    post:
+      summary: "Reduce product stock quantity"
+      description: "Reduces the stock quantity of a product by id"
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "08150d93-1da7-41e8-b140-2a9341b60f6e"
+        - name: quantity
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 5
+      requestBody:
+        required: true
+        description: "Name of the subcatalog"
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "shoes"
+      responses:
+        '200':
+          description: "Product stock reduced"
+
+# UserController
+  /user/create:
+    post:
+      summary: "Create a new user"
+      description: "Creates a new user with the given details"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDto"
+      responses:
+        '200':
+          description: "User created"
+
+#Bank
+  /bank/create/bank-account:
+    post:
+      summary: Creates a bank account
+      description: Creates a new bank account with the specified details
+      responses:
+        '200':
+          description: Bank account created
+
+  /bank/{accountNumber}/create/card:
+    post:
+      summary: Create new card
+      description: Creates a new card with the specified details
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: '1234567890'
+      responses:
+        '200':
+          description: Card created in account
+  
+  /bank/validate/{cardNumber}/{cvv}:
+    post:
+      summary: "Method to validate card data"
+      description: "Validates the card data provided by the user from the client"
+      parameters:
+        - name: cardNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1234567890123456"
+        - name: cvv
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "123"
+      requestBody:
+        required: true
+        description: "Expiration date of the card"
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "12/25"
+      responses:
+        '200':
+          description: Card data validated
+
+  /bank/top-up/{cardNumber}/{amount}:
+    post:
+      summary: "Top up account balance"
+      description: "Tops up the balance of the specified bank account by card number"
+      parameters:
+        - name: cardNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "885351475761580881"
+        - name: amount
+          in: path
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 100.0
+      responses:
+        '200':
+          description: Bank account topped up
+
+  /bank/process-transaction/{transactionAmount}:
+    post:
+      summary: "Process a payment transaction"
+      description: "Processes a payment transaction using the provided details"
+      parameters:
+        - name: transactionAmount
+          in: path
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 100.0
+      requestBody:
+        required: true
+        description: "Card data for the transaction"
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "id": "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd",
+                "cardNumber": "1234567890123456",
+                "cvv": "123",
+                "expirationDate": "12/25"
+              }
+      responses:
+        '200':
+          description: Transaction processed
+
+#PaymentMethodController
+  /payment/add/{userId}:
+      post:
+        summary: "Add a new payment method"
+        description: "Adds a payment method (e.g. card) for the specified user"
+        parameters:
+          - name: userId
+            in: path
+            required: true
+            schema:
+              type: string
+              example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+          - name: paymentType
+            in: query
+            required: true
+            schema:
+              type: string
+              example: "CARD"
+          - name: cardNumber
+            in: query
+            required: true
+            schema:
+              type: string
+              example: "1234567890123456"
+          - name: expirationDate
+            in: query
+            required: true
+            schema:
+              type: string
+              example: "12/25"
+          - name: cvv
+            in: query
+            required: true
+            schema:
+              type: string
+              example: "123"
+        responses:
+          '200':
+            description: "Payment method added successfully"
+
+  /payment/get/all/{userId}:
+    post:
+      summary: "Get all available user payment methods"
+      description: "Retrieves all payment methods for a specific user"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+      responses:
+        '200':
+          description: "All available user payment methods"
+
+#TransactionController
+  /transaction/process/{orderId}/{paymentMethodId}:
+      post:
+        summary: "Process a payment transaction"
+        description: "Processes a payment transaction using the provided details"
+        parameters:
+          - name: orderId
+            in: path
+            required: true
+            schema:
+              type: string
+              example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+          - name: paymentMethodId
+            in: path
+            required: true
+            schema:
+              type: string
+              example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+        responses:
+          '200':
+            description: "Transaction processed"
+
+# Регистрируем схемы для DTO
+components:
+  schemas:
+    ProductDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Laptop"
+          description: "Name of the product"
+        description:
+          type: string
+          example: "High-performance laptop"
+          description: "Description of the product"
+        price:
+          type: number
+          example: 999.99
+          description: "Price of the product"
+        stockQuantity:
+          type: integer
+          example: 10000
+          description: "Stock quantity of the product"
+        subcatalogName:
+          type: string
+          example: "shoes"
+          description: "Name of the subcatalog for this product"
+
+    UserDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "Oleg Olegov"
+          description: "User full name"
+        password:
+          type: string
+          example: "password123"
+          description: "User password"
+        email:
+          type: string
+          example: "test@gmail.com"
+          description: "User email"
+        phoneNumber:
+          type: string
+          example: +1234567890
+          description: "User phone number"
+
