@@ -7,6 +7,7 @@ COPY build.gradle.kts .
 COPY settings.gradle.kts .
 COPY Dockerfile .
 COPY compose.yaml .
+COPY .env .
 
 RUN chmod +x ./gradlew \
     && ./gradlew dependencies --no-daemon
