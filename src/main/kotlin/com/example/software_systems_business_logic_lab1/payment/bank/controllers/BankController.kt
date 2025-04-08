@@ -39,10 +39,6 @@ class BankController(
 
     @PostMapping("/process-transaction")
     fun processTransaction(
-        @Parameter(
-            description = "Amount of the transaction to be processed",
-            example = "100.0"
-        )
         @RequestParam transactionAmount: String,
         @RequestBody cardData: OzonPaymentData
     ) = bankService.processTransaction(cardData, transactionAmount.toDouble())
