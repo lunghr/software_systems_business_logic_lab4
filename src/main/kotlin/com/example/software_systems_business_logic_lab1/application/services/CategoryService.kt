@@ -34,16 +34,16 @@ class CategoryService(
             parent.isParent.takeIf { it }?.let {
                 Category(key = CategoryKey(name), parentName = parentName).takeIf {
                     categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent)
-                } ?: throw CategoryIsNotParentException(name)
-            } ?: throw CategoryAlreadyExistsException(name)
+                } ?: throw CategoryAlreadyExistsException(name)
+            } ?: throw CategoryIsNotParentException(parentName)
         } ?: throw CategoryNotFoundException(parentName)
 
 
     fun getProductsByCategory(categoryName: String): List<Product> =
         categoryRepository.findByKeyName(categoryName)?.let { category ->
-            category.takeIf { it.isParent || !it.isParent}
+            category.takeIf { !it.isParent}
                 ?.let { productRepository.findProductsByKeyCategoryId(category.key.id) }
-//                ?: throw CategoryIsNotParentException(categoryName)
+                ?: throw CategoryIsParentException(categoryName)
         } ?: throw CategoryNotFoundException(categoryName)
 
     //TODO exception with incorrect id
