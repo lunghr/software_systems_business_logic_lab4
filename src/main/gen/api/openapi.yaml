@@ -1,0 +1,622 @@
+openapi: 3.0.1
+info:
+  title: Cart API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+paths:
+  /cart/get/{cartId}:
+    get:
+      operationId: getCart
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Cart found
+      summary: Get cart by id
+      x-accepts:
+      - application/json
+  /cart/delete/{cartId}/{productId}:
+    delete:
+      description: Deletes product from cart by id
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Cart deleted
+      summary: Delete product from cart
+      x-accepts:
+      - application/json
+  /cart/decrement/{cartId}/{productId}:
+    patch:
+      description: Decrements product in cart by id
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Product incremented
+      summary: Decrements product in cart
+      x-accepts:
+      - application/json
+  /cart/increment/{cartId}/{productId}:
+    patch:
+      description: Increments product in cart by id
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Product incremented
+      summary: Increments product in cart
+      x-accepts:
+      - application/json
+  /cart/add/{cartId}/{productId}:
+    post:
+      description: Adds product to cart by id
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Product added
+      summary: Add product to cart
+      x-accepts:
+      - application/json
+  /order/create/{cartId}:
+    post:
+      description: Creates order by cart id with chosen products from cart
+      parameters:
+      - explode: false
+        in: path
+        name: cartId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+              - e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+              - 9c1e8a0e-3b4f-4f5e-8b1c-6d5f8a0e3b4f
+              items:
+                type: string
+              type: array
+        description: List of product UUIDs
+        required: true
+      responses:
+        "200":
+          description: Order created successfully
+      summary: Create order
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /category/create/{categoryName}:
+    post:
+      description: Creates a new category if it does not already exist
+      parameters:
+      - explode: false
+        in: path
+        name: categoryName
+        required: true
+        schema:
+          example: clothes
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Category created
+      summary: Create a new category
+      x-accepts:
+      - application/json
+  /category/create/{parentCategoryName}/{childCategoryName}:
+    post:
+      description: Creates a new child category under the specified parent category
+      parameters:
+      - explode: false
+        in: path
+        name: parentCategoryName
+        required: true
+        schema:
+          example: clothes
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: childCategoryName
+        required: true
+        schema:
+          example: shoes
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Child category created
+      summary: Create a new child category
+      x-accepts:
+      - application/json
+  /category/get:
+    get:
+      description: Returns a list of all parents categories
+      responses:
+        "200":
+          description: List of catalogs
+      summary: Get all parents categories
+      x-accepts:
+      - application/json
+  /category/get/{categoryName}:
+    get:
+      description: Returns all child categories of the specified category
+      parameters:
+      - explode: false
+        in: path
+        name: categoryName
+        required: true
+        schema:
+          example: clothes
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: List of child categories
+      summary: Get all child categories of a category
+      x-accepts:
+      - application/json
+  /catalog/get/{categoryName}/products:
+    get:
+      description: Returns all products in the specified category
+      parameters:
+      - explode: false
+        in: path
+        name: categoryName
+        required: true
+        schema:
+          example: clothes
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: List of products
+      summary: Get products in category
+      x-accepts:
+      - application/json
+  /product/create:
+    post:
+      description: Creates a new product with the given details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDto'
+        required: true
+      responses:
+        "200":
+          description: Product created
+      summary: Create a new product
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /product/quantity/{productId}/change/{quantity}:
+    post:
+      description: Changes the stock quantity of a product by id
+      parameters:
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: 08150d93-1da7-41e8-b140-2a9341b60f6e
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: quantity
+        required: true
+        schema:
+          example: 10
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: shoes
+              type: string
+        description: Name of the subcatalog
+        required: true
+      responses:
+        "200":
+          description: Product stock updated
+      summary: Change product stock quantity
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /product/quantity/{productId}/reduce/{quantity}:
+    post:
+      description: Reduces the stock quantity of a product by id
+      parameters:
+      - explode: false
+        in: path
+        name: productId
+        required: true
+        schema:
+          example: 08150d93-1da7-41e8-b140-2a9341b60f6e
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: quantity
+        required: true
+        schema:
+          example: 5
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: shoes
+              type: string
+        description: Name of the subcatalog
+        required: true
+      responses:
+        "200":
+          description: Product stock reduced
+      summary: Reduce product stock quantity
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /user/create:
+    post:
+      description: Creates a new user with the given details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+        required: true
+      responses:
+        "200":
+          description: User created
+      summary: Create a new user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /bank/create/bank-account:
+    post:
+      description: Creates a new bank account with the specified details
+      responses:
+        "200":
+          description: Bank account created
+      summary: Creates a bank account
+      x-accepts:
+      - application/json
+  /bank/{accountNumber}/create/card:
+    post:
+      description: Creates a new card with the specified details
+      parameters:
+      - explode: false
+        in: path
+        name: accountNumber
+        required: true
+        schema:
+          example: "1234567890"
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Card created in account
+      summary: Create new card
+      x-accepts:
+      - application/json
+  /bank/validate/{cardNumber}/{cvv}:
+    post:
+      description: Validates the card data provided by the user from the client
+      parameters:
+      - explode: false
+        in: path
+        name: cardNumber
+        required: true
+        schema:
+          example: "1234567890123456"
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: cvv
+        required: true
+        schema:
+          example: "123"
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 12/25
+              type: string
+        description: Expiration date of the card
+        required: true
+      responses:
+        "200":
+          description: Card data validated
+      summary: Method to validate card data
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /bank/top-up/{cardNumber}/{amount}:
+    post:
+      description: Tops up the balance of the specified bank account by card number
+      parameters:
+      - explode: false
+        in: path
+        name: cardNumber
+        required: true
+        schema:
+          example: "885351475761580881"
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: amount
+        required: true
+        schema:
+          example: 100.0
+          format: double
+          type: number
+        style: simple
+      responses:
+        "200":
+          description: Bank account topped up
+      summary: Top up account balance
+      x-accepts:
+      - application/json
+  /bank/process-transaction/{transactionAmount}:
+    post:
+      description: Processes a payment transaction using the provided details
+      parameters:
+      - explode: false
+        in: path
+        name: transactionAmount
+        required: true
+        schema:
+          example: 100.0
+          format: double
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                id: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+                cardNumber: "1234567890123456"
+                cvv: "123"
+                expirationDate: 12/25
+              type: object
+        description: Card data for the transaction
+        required: true
+      responses:
+        "200":
+          description: Transaction processed
+      summary: Process a payment transaction
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /payment/add/{userId}:
+    post:
+      description: Adds a payment method (e.g. card) for the specified user
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: paymentType
+        required: true
+        schema:
+          example: CARD
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: cardNumber
+        required: true
+        schema:
+          example: "1234567890123456"
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: expirationDate
+        required: true
+        schema:
+          example: 12/25
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: cvv
+        required: true
+        schema:
+          example: "123"
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Payment method added successfully
+      summary: Add a new payment method
+      x-accepts:
+      - application/json
+  /payment/get/all/{userId}:
+    get:
+      description: Retrieves all payment methods for a specific user
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: All available user payment methods
+      summary: Get all available user payment methods
+      x-accepts:
+      - application/json
+  /transaction/process/{orderId}/{paymentMethodId}:
+    post:
+      description: Processes a payment transaction using the provided details
+      parameters:
+      - explode: false
+        in: path
+        name: orderId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: paymentMethodId
+        required: true
+        schema:
+          example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Transaction processed
+      summary: Process a payment transaction
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    ProductDto:
+      example:
+        price: 99.9
+        name: Zara shoes
+        description: Zara shoes Red
+        stockQuantity: 10000
+        categoryId: 8ab0257e-d07d-477f-b713-45bc324e3b6e
+      properties:
+        name:
+          description: Name of the product
+          example: Zara shoes
+          type: string
+        description:
+          description: Description of the product
+          example: Zara shoes Red
+          type: string
+        price:
+          description: Price of the product
+          example: 99.9
+          type: number
+        stockQuantity:
+          description: Stock quantity of the product
+          example: 10000
+          type: integer
+        categoryId:
+          description: Category ID of the product
+          example: 8ab0257e-d07d-477f-b713-45bc324e3b6e
+          type: string
+      type: object
+    UserDto:
+      example:
+        password: password123
+        phoneNumber: "1234567890"
+        email: test@gmail.com
+        username: Oleg Olegov
+      properties:
+        username:
+          description: User full name
+          example: Oleg Olegov
+          type: string
+        password:
+          description: User password
+          example: password123
+          type: string
+        email:
+          description: User email
+          example: test@gmail.com
+          type: string
+        phoneNumber:
+          description: User phone number
+          example: "1234567890"
+          type: string
+      type: object
+

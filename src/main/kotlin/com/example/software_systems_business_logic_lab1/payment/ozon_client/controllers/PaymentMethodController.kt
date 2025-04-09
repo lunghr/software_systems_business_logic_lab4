@@ -22,10 +22,6 @@ class PaymentMethodController(
     )
     @GetMapping("/get/all/{userId}")
     fun getAllPaymentMethods(
-        @Parameter(
-            description = "ID of the user whose payment methods are to be retrieved",
-            example = "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
-        )
         @PathVariable userId: UUID
     ) = paymentMethodService.getPaymentMethodsByUserId(userId)
 

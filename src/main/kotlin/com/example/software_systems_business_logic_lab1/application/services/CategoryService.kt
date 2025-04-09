@@ -41,9 +41,9 @@ class CategoryService(
 
     fun getProductsByCategory(categoryName: String): List<Product> =
         categoryRepository.findByKeyName(categoryName)?.let { category ->
-            category.takeIf { it.isParent }
+            category.takeIf { it.isParent || !it.isParent}
                 ?.let { productRepository.findProductsByKeyCategoryId(category.key.id) }
-                ?: throw CategoryIsNotParentException(categoryName)
+//                ?: throw CategoryIsNotParentException(categoryName)
         } ?: throw CategoryNotFoundException(categoryName)
 
     //TODO exception with incorrect id

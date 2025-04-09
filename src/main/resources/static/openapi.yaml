@@ -196,12 +196,12 @@ paths:
         '200':
           description: "List of child categories"
 
-  /catalog/get/{categoryName}/products:
+  /category/get/categories/{categoryName}/products:
     get:
       summary: "Get products in category"
       description: "Returns all products in the specified category"
       parameters:
-        - name: catalogName
+        - name: categoryName
           in: path
           required: true
           schema:
@@ -444,7 +444,7 @@ paths:
           description: "Payment method added successfully"
 
   /payment/get/all/{userId}:
-    post:
+    get:
       summary: "Get all available user payment methods"
       description: "Retrieves all payment methods for a specific user"
       parameters:
