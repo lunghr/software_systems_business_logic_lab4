@@ -14,6 +14,6 @@ interface CartProductRepository: CassandraRepository<CartProduct, CartProductKey
 
     fun findByKeyCartId(cartId: UUID): List<CartProduct>
 
-    @Query("UPDATE cart_products SET quantity = ?0 WHERE cart_id = ?1 AND product_id = ?2")
+    @Query("UPDATE cart_products SET quantity = ?0 WHERE cart_id = ?1 AND product_id = ?2 IF EXISTS")
     fun updateQuantity(quantity: Int, cartId: UUID, productId: UUID): Boolean
 }

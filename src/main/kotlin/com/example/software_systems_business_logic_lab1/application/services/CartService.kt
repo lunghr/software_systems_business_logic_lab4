@@ -32,11 +32,11 @@ class CartService(
         } ?: throw CartNotFoundException()
     }
 
-    fun incrementProductQuantity(cartId: UUID, productId: UUID): ResponseEntity<Any> {
+    fun incrementProductQuantity(cartId: UUID, productId: UUID): Int {
         return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
             if (productService.isAvailableToOrder(productId, 1)) {
                 cartProductRepository.updateQuantity(cartProduct.quantity + 1, cartId, productId)
-                ResponseEntity.status(204).build<Any>()
+                cartProduct.quantity + 1
             } else {
                 throw OutOfStockException()
             }
@@ -44,14 +44,14 @@ class CartService(
 
     }
 
-    fun decrementProductQuantity(cartId: UUID, productId: UUID): ResponseEntity<Any> {
+    fun decrementProductQuantity(cartId: UUID, productId: UUID): Int {
         return cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.let { cartProduct ->
             if (cartProduct.quantity > 1) {
                 cartProductRepository.updateQuantity(cartProduct.quantity - 1, cartId, productId)
-                ResponseEntity.status(204).build()
+                return cartProduct.quantity - 1
             } else {
                 cartProductRepository.delete(cartProduct)
-                ResponseEntity.status(204).build()
+                return 0
             }
         } ?: throw ProductNotFoundException()
     }
