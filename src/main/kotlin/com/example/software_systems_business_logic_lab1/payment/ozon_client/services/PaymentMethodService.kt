@@ -22,7 +22,6 @@ class PaymentMethodService(
 ) {
 
     fun getPaymentMethodsByUserId(userId: UUID): List<PaymentMethod> {
-        println(userId)
         return paymentMethodRepository.findAllByUserId(userId)
     }
 

@@ -4,6 +4,7 @@ import com.example.software_systems_business_logic_lab1.application.models.*
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.CategoryKey
 import com.example.software_systems_business_logic_lab1.application.repos.CategoryRepository
 import com.example.software_systems_business_logic_lab1.application.repos.ProductRepository
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -26,14 +27,17 @@ class CategoryService(
             ?: throw CategoryNotFoundException(parentName)
 
     fun createPaternalCategory(name: String): Category = Category(key = CategoryKey(name))
-        .takeIf { categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent) }
+        .takeIf {
+            val res = categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent)
+            res.wasApplied()
+        }
         ?: throw CategoryAlreadyExistsException(name)
 
     fun createChildCategory(parentName: String, name: String): Category =
         categoryRepository.findByKeyName(parentName)?.let { parent ->
             parent.isParent.takeIf { it }?.let {
                 Category(key = CategoryKey(name), parentName = parentName).takeIf {
-                    categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent)
+                    categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent).wasApplied()
                 } ?: throw CategoryAlreadyExistsException(name)
             } ?: throw CategoryIsNotParentException(parentName)
         } ?: throw CategoryNotFoundException(parentName)
@@ -41,7 +45,7 @@ class CategoryService(
 
     fun getProductsByCategory(categoryName: String): List<Product> =
         categoryRepository.findByKeyName(categoryName)?.let { category ->
-            category.takeIf { !it.isParent}
+            category.takeIf { !it.isParent }
                 ?.let { productRepository.findProductsByKeyCategoryId(category.key.id) }
                 ?: throw CategoryIsParentException(categoryName)
         } ?: throw CategoryNotFoundException(categoryName)

@@ -10,6 +10,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/cart")
+@CrossOrigin(origins = ["*"])
 class CartController(
     private val cartService: CartService
 ) {

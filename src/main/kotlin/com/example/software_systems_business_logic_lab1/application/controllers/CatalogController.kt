@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/category")
+@CrossOrigin(origins = ["*"])
 class CatalogController(
     private val categoryService: CategoryService,
 ) {

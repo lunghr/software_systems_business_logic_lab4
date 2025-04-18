@@ -26,7 +26,7 @@ class CartService(
                             cartId,
                             productId,
                             1
-                        )
+                        ).wasApplied()
             }
                 ?: throw ProductNotFoundException()
         } ?: throw CartNotFoundException()

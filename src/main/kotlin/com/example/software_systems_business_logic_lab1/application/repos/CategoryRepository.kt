@@ -1,13 +1,14 @@
 package com.example.software_systems_business_logic_lab1.application.repos
 
 import com.example.software_systems_business_logic_lab1.application.models.Category
+import org.springframework.data.cassandra.core.WriteResult
 import org.springframework.data.cassandra.repository.CassandraRepository
 import org.springframework.data.cassandra.repository.Query
 import java.util.UUID
 
 interface CategoryRepository : CassandraRepository<Category, UUID> {
     @Query("INSERT INTO categories (category_id, category_name, parentName, isParent) VALUES (?0, ?1, ?2, ?3) IF NOT EXISTS")
-    fun saveIfNotExist(id: UUID, name: String, parentName: String?, isParent: Boolean): Boolean
+    fun saveIfNotExist(id: UUID, name: String, parentName: String?, isParent: Boolean): WriteResult
 
     @Query("SELECT * FROM categories WHERE category_name = ?0 ALLOW FILTERING")
     fun findByKeyName(name: String): Category?
