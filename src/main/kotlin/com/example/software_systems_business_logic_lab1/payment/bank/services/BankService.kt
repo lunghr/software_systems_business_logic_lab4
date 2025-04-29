@@ -38,7 +38,7 @@ class BankService(
             cardNumber = cardNumber,
             expirationDate = expirationDate,
             cvv = cvv
-        ) ?: throw RuntimeException("Card not found")
+        ) ?: throw BankAccountNotFoundException()
         println(card.cardNumber)
         println(card.expirationDate)
         println(card.cvv)

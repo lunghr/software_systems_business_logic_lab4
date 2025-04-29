@@ -14,7 +14,7 @@ class UserService(
 
     fun createUser(user: User): User {
         try {
-            return userRepository.save(user)
+            return userRepository.save(user).also { cartService.createCart(it) }
         } catch (e: Exception) {
             throw UserAlreadyExistsException()
         }

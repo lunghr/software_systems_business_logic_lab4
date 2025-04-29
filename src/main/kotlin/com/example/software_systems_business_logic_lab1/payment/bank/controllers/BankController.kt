@@ -2,15 +2,11 @@ package com.example.software_systems_business_logic_lab1.payment.bank.controller
 
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/bank")
+@CrossOrigin(origins = ["*"])
 class BankController(
     private val bankService: BankService
 ) {

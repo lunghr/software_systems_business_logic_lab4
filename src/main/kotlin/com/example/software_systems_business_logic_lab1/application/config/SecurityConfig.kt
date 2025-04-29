@@ -56,7 +56,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers("/auth/login", "auth/register-user").permitAll()
+                    .requestMatchers("/auth/login/**", "/auth/register-user/**", "/bank/**").permitAll()
                     .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/index.html").permitAll()
                     .requestMatchers("/notifications/**").permitAll()
