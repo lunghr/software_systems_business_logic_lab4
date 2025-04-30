@@ -94,4 +94,8 @@ class CategoryService(
         else -> false
     }
 
+    fun delete(category: Category){
+        categoryRepository.delete(category)
+    }
+
 }

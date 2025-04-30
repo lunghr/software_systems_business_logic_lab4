@@ -55,4 +55,8 @@ class ProductService(
         return productRepository.findProductsByIds(productIds)
     }
 
+    fun delete(product: Product){
+        productRepository.delete(product)
+    }
+
 }

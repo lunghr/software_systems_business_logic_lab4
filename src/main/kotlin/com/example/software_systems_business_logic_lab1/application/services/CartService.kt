@@ -76,8 +76,16 @@ class CartService(
             .filter { productService.isAvailableToOrder(it, 1) }
     }
 
+    fun getCartByUserId(user: User): Cart{
+        return cartRepository.findCartByUserId(user.id)?: throw CartNotFoundException()
+    }
+
     fun getUser(cartId: UUID): User {
         return cartRepository.findCartById(cartId)?.user
             ?: throw CartNotFoundException()
+    }
+
+    fun delete(cart: Cart){
+        cartRepository.delete(cart)
     }
 }

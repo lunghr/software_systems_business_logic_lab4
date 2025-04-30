@@ -10,8 +10,8 @@ import com.example.software_systems_business_logic_lab1.payment.ozon_client.mode
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentMethod
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.OzonPaymentDataRepository
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.PaymentMethodRepository
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 
@@ -50,6 +50,13 @@ class PaymentMethodService(
 
     private fun isExist(paymentData: OzonPaymentData): Boolean {
         return ozonPaymentDataRepository.findByCardNumber(paymentData.cardNumber) != null
+    }
+
+    @Transactional
+    fun deleteMethodById(id: UUID) {
+        val paymentMethod = paymentMethodRepository.findPaymentMethodById(id) ?: throw UserNotFoundException()
+        ozonPaymentDataRepository.delete(paymentMethod.ozonPaymentData)
+        paymentMethodRepository.delete(paymentMethod)
     }
 
 }

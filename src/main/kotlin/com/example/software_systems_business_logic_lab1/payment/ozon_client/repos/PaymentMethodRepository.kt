@@ -6,4 +6,5 @@ import java.util.UUID
 
 interface PaymentMethodRepository: JpaRepository<PaymentMethod, UUID> {
     fun findAllByUserId(userId: UUID): List<PaymentMethod>
+    fun findPaymentMethodById(id: UUID): PaymentMethod?
 }

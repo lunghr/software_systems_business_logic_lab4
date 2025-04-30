@@ -7,4 +7,6 @@ import java.util.*
 
 interface CartRepository : JpaRepository<Cart, UUID> {
     fun findCartById(cartId: UUID): Cart?
+
+    fun findCartByUserId(userId: UUID): Cart?
 }

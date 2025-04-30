@@ -37,4 +37,8 @@ class UserService(
         return userRepository.findUserById(id)
     }
 
+    fun delete(user: User){
+        userRepository.delete(user)
+    }
+
 }

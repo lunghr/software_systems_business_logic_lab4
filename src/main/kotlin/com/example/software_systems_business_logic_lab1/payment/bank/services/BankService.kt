@@ -21,7 +21,8 @@ class BankService(
 
     fun createBankAccount(): BankAccount =
         try {
-            bankAccountRepository.save(BankAccount())
+            println("HEEEEEEEEEEEY")
+            bankAccountRepository.save(BankAccount()).also { println(bankAccountRepository.findByAccountNumber(it.accountNumber)) }
         } catch (e: Exception) {
             throw BankAccountCreationException()
         }
@@ -72,6 +73,14 @@ class BankService(
         bankAccount.balance -= transactionAmount
         bankAccountRepository.save(bankAccount)
         return TransactionStatus.COMPLETED
+    }
+
+    fun deleteAccount(bankAccount: BankAccount){
+        bankAccountRepository.delete(bankAccount)
+    }
+
+    fun deleteCard(card: Card){
+        cardRepository.delete(card)
     }
 
 }

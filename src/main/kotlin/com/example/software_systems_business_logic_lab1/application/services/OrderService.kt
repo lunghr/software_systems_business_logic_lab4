@@ -7,6 +7,7 @@ import com.example.software_systems_business_logic_lab1.application.models.enums
 import com.example.software_systems_business_logic_lab1.application.repos.OrderRepository
 import org.springframework.data.cassandra.core.CassandraTemplate
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -59,5 +60,10 @@ class OrderService(
     fun changeOrderStatus(order: Order, status: OrderPaymentStatus): Order {
         order.orderPaymentStatus = status
         return orderRepository.save(order)
+    }
+
+    @Transactional
+    fun delete(order: Order){
+        orderRepository.delete(order)
     }
 }

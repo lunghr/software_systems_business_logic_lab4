@@ -40,7 +40,8 @@ class DataSourceConfig {
     fun entityManagerFactory(builder: EntityManagerFactoryBuilder): LocalContainerEntityManagerFactoryBean {
         val properties = hashMapOf<String, Any>(
             "jakarta.persistence.transactionType" to "JTA",
-            "hibernate.hbm2ddl.auto" to "update",
+//            "hibernate.hbm2ddl.auto" to "update",
+            "hibernate.hbm2ddl.auto" to "create-drop",
             "hibernate.dialect" to "org.hibernate.dialect.PostgreSQLDialect"
         )
 
