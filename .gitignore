@@ -40,3 +40,5 @@ out/
 .kotlin
 .env
 /src/main/gen
+tmlog35.log
+tmlog.lck
