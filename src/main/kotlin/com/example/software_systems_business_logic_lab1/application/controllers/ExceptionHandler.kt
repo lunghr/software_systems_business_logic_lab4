@@ -55,6 +55,11 @@ class ExceptionHandler {
         return ResponseEntity.status(404).body(ex.message)
     }
 
+    @ExceptionHandler(PaymentMethodAlreadyExistsException::class)
+    fun handlePaymentMethodAlreadyExists (ex: PaymentMethodAlreadyExistsException): ResponseEntity<String> {
+        return ResponseEntity.status(409).body(ex.message)
+    }
+
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFound(ex: UserNotFoundException): ResponseEntity<String> {
         logger.error("User not found: ${ex.message}")
@@ -98,7 +103,17 @@ class ExceptionHandler {
     }
 
     @ExceptionHandler(InvalidDataException::class)
-    fun handleOutOfStock(ex: InvalidDataException): ResponseEntity<String> {
+    fun handleInvalidDataException(ex: InvalidDataException): ResponseEntity<String> {
         return ResponseEntity.status(400).body(ex.message)
+    }
+
+    @ExceptionHandler(ProductAlreadyInCart::class)
+    fun handleProductAlreadyInCartException(ex: ProductAlreadyInCart): ResponseEntity<String> {
+        return ResponseEntity.status(409).body(ex.message)
+    }
+
+    @ExceptionHandler(ProductNotFoundException::class)
+    fun handleProductNotFoundException(ex: ProductNotFoundException): ResponseEntity<String> {
+        return ResponseEntity.status(404).body(ex.message)
     }
 }

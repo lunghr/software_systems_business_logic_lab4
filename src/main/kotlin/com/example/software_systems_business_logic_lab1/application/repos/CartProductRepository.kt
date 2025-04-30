@@ -8,8 +8,6 @@ import org.springframework.data.cassandra.repository.Query
 import java.util.*
 
 interface CartProductRepository: CassandraRepository<CartProduct, CartProductKey> {
-    @Query("INSERT INTO cart_products (cart_id, product_id, quantity) VALUES (?0, ?1, ?2) IF NOT EXISTS")
-    fun saveIfNotExists(cartId: UUID, productId: UUID, quantity: Int): WriteResult
 
     fun findCartProductByKeyCartIdAndKeyProductId(cartId: UUID, productId: UUID): CartProduct?
 

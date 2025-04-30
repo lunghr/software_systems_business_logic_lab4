@@ -1,10 +1,12 @@
 package com.example.software_systems_business_logic_lab1.payment.ozon_client.services
 
 import com.example.software_systems_business_logic_lab1.application.models.InvalidCardDataException
+import com.example.software_systems_business_logic_lab1.application.models.PaymentMethodAlreadyExistsException
 import com.example.software_systems_business_logic_lab1.application.models.UserNotFoundException
 import com.example.software_systems_business_logic_lab1.application.repos.UserRepository
 import com.example.software_systems_business_logic_lab1.payment.bank.models.enums.PaymentType
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
+import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.OzonPaymentData
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentMethod
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.OzonPaymentDataRepository
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.PaymentMethodRepository
@@ -35,6 +37,8 @@ class PaymentMethodService(
         if (!isValid) {
             throw InvalidCardDataException()
         }
+        val paymentData = toOzonPaymentData(cardNumber, cvv, expiryDate)
+        if (isExist(paymentData)) throw PaymentMethodAlreadyExistsException()
         val savedOzonPaymentData = ozonPaymentDataRepository.save(toOzonPaymentData(cardNumber, expiryDate, cvv))
         return paymentMethodRepository.save(toPaymentMethod(user, savedOzonPaymentData, PaymentType.CARD))
 
@@ -42,6 +46,10 @@ class PaymentMethodService(
 
     fun getPaymentMethodById(paymentMethodId: UUID): PaymentMethod? {
         return paymentMethodRepository.findById(paymentMethodId).orElse(null)
+    }
+
+    private fun isExist(paymentData: OzonPaymentData): Boolean {
+        return ozonPaymentDataRepository.findByCardNumber(paymentData.cardNumber) != null
     }
 
 }

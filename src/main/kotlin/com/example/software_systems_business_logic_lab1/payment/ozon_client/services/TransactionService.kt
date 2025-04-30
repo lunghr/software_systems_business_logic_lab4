@@ -31,6 +31,8 @@ class TransactionService(
         val order = orderService.getOrderById(orderId)
             ?: throw OrderNotFoundException()
 
+        if (order.orderPaymentStatus != OrderPaymentStatus.WAITING_FOR_PAYMENT) throw OrderNotFoundException()
+
         val transaction = transactionRepository.save(
             toTransaction(
                 paymentMethod = paymentMethod,

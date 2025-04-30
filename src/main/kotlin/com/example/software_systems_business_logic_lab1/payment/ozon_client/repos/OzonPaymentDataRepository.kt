@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface OzonPaymentDataRepository:JpaRepository<OzonPaymentData, UUID> {
+    fun findByCardNumber(cardNumber: String): OzonPaymentData?
 
 }

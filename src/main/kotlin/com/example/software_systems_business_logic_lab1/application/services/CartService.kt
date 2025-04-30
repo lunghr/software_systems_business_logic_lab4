@@ -1,8 +1,11 @@
 package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.models.*
+import com.example.software_systems_business_logic_lab1.application.models.key_classes.CartProductKey
 import com.example.software_systems_business_logic_lab1.application.repos.CartProductRepository
 import com.example.software_systems_business_logic_lab1.application.repos.CartRepository
+import org.springframework.data.cassandra.core.CassandraTemplate
+import org.springframework.data.cassandra.core.InsertOptions
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -12,24 +15,19 @@ import java.util.UUID
 class CartService(
     private val cartRepository: CartRepository,
     private val cartProductRepository: CartProductRepository,
-    private val productService: ProductService
+    private val productService: ProductService,
+    private val cassandraTemplate: CassandraTemplate,
 ) {
     fun createCart(user: User): Cart {
         return cartRepository.save(Cart(user = user))
     }
 
     fun addProductToCart(cartId: UUID, productId: UUID): CartProduct {
-        return cartRepository.findCartById(cartId)?.let {
-            toCartProduct(cartId, productId, 1).takeIf {
-                productService.isExists(productId) &&
-                        cartProductRepository.saveIfNotExists(
-                            cartId,
-                            productId,
-                            1
-                        ).wasApplied()
-            }
-                ?: throw ProductNotFoundException()
-        } ?: throw CartNotFoundException()
+        require(cartRepository.existsById(cartId)) { throw CartNotFoundException() }
+        val key = cartProductRepository.findCartProductByKeyCartIdAndKeyProductId(cartId, productId)?.key
+        if (key != null) throw ProductAlreadyInCart()
+        if (!productService.isExists(productId)) throw ProductNotFoundException()
+        return cartProductRepository.save(toCartProduct(cartId, productId, quantity = 1))
     }
 
     fun incrementProductQuantity(cartId: UUID, productId: UUID): Int {

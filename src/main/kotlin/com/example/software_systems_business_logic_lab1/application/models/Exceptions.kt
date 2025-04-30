@@ -21,6 +21,9 @@ class OrderNotFoundException :
 class PaymentMethodNotFoundException :
     RuntimeException("Payment method not found")
 
+class PaymentMethodAlreadyExistsException :
+    RuntimeException("Payment already added in your account")
+
 class UserNotFoundException :
     RuntimeException("User not found")
 
@@ -28,7 +31,10 @@ class InvalidCardDataException :
     RuntimeException("Invalid card data")
 
 class ProductNotFoundException :
-    RuntimeException("Product not found or already in cart")
+    RuntimeException("Product not found")
+
+class ProductAlreadyInCart :
+    RuntimeException("Product already in cart")
 
 class BankAccountCreationException :
     RuntimeException("Bank account creation failed")
