@@ -47,3 +47,6 @@ class CartNotFoundException :
 
 class OutOfStockException :
     RuntimeException("Product is out of stock")
+
+class InvalidDataException :
+    RuntimeException("Invalid role")

@@ -7,10 +7,11 @@ import org.springframework.data.cassandra.repository.Query
 import java.util.UUID
 
 interface ProductRepository : CassandraRepository<Product, ProductCategoryKey> {
-    fun findByKeyCategoryId(categoryID: UUID): List<Product>
 
     @Query("SELECT * FROM products WHERE product_id = ?0 ALLOW FILTERING")
     fun findProductByKeyProductId(productId: UUID): Product?
+
+    fun findProductByKeyProductIdAndKeyCategoryId(productId: UUID, categoryID: UUID): Product?
 
     @Query("UPDATE products SET stockquantity = stockquantity - ?1 WHERE product_id = ?0 AND category_id = ?2 IF stockquantity >= ?1")
     fun reduceStockQuantity(productId: UUID, categoryID: UUID, quantity: Int): Boolean

@@ -2,6 +2,7 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.dto.AuthRequestDto
 import com.example.software_systems_business_logic_lab1.application.dto.RegisterRequestDto
+import com.example.software_systems_business_logic_lab1.application.models.InvalidDataException
 import com.example.software_systems_business_logic_lab1.application.models.User
 import com.example.software_systems_business_logic_lab1.application.models.UserNotFoundException
 import com.example.software_systems_business_logic_lab1.application.models.enums.UserRole
@@ -49,11 +50,19 @@ class AuthService(
     fun changeRole(role: String, userId: UUID): String {
         val userDetails = userService.getUserById(userId)
             ?: throw UserNotFoundException()
+
         val cleanRole = role.trim().replace("\"", "").uppercase()
-        userDetails.role = UserRole.valueOf(role)
-        return userService.updateUserRole(userDetails).takeIf { it > 0 }?.let {
-            userDetails.role.toString()
-        } ?: throw UserNotFoundException()
+        try {
+            userDetails.role = UserRole.valueOf(cleanRole)
+            userService.updateUserRole(userDetails)
+
+            return userDetails.role.toString()
+        }catch (e: Exception){
+            throw InvalidDataException()
+        }
+
+
+
     }
 
 }

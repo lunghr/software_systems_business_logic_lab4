@@ -4,6 +4,7 @@ import com.example.software_systems_business_logic_lab1.application.models.*
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.CartProductKey
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.CategoryKey
 import com.example.software_systems_business_logic_lab1.application.models.key_classes.OrderProductKey
+import java.lang.String.valueOf
 import java.util.UUID
 
 fun toCategory(name: String, parentName: String? = null): Category {
@@ -53,5 +54,7 @@ fun toOrderProduct(orderId:UUID, productId: UUID, quantity: Int): OrderProduct {
         quantity = quantity
     )
 }
+
+
 
 

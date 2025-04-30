@@ -7,12 +7,14 @@ import org.springframework.data.cassandra.repository.Query
 import java.util.UUID
 
 interface CategoryRepository : CassandraRepository<Category, UUID> {
-    @Query("INSERT INTO categories (category_id, category_name, parentName, isParent) VALUES (?0, ?1, ?2, ?3) IF NOT EXISTS")
-    fun saveIfNotExist(id: UUID, name: String, parentName: String?, isParent: Boolean): WriteResult
+    @Query("INSERT INTO categories (category_name, category_id, parentName, isParent) VALUES (?0, ?1, ?2, ?3) IF NOT EXISTS")
+    fun saveIfNotExist(name: String, id: UUID, parentName: String?, isParent: Boolean): WriteResult
 
     @Query("SELECT * FROM categories WHERE category_name = ?0 ALLOW FILTERING")
     fun findByKeyName(name: String): Category?
 
+
+    @Query("SELECT * FROM categories WHERE category_id = ?0 ALLOW FILTERING")
     fun findCategoryByKeyId(id: UUID): Category?
 
     @Query("UPDATE categories SET isParent = ?2 WHERE category_id = ?0 and category_name = ?1 IF EXISTS")

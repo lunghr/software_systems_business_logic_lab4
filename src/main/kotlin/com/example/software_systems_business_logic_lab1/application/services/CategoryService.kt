@@ -5,13 +5,16 @@ import com.example.software_systems_business_logic_lab1.application.models.key_c
 import com.example.software_systems_business_logic_lab1.application.repos.CategoryRepository
 import com.example.software_systems_business_logic_lab1.application.repos.ProductRepository
 import org.springframework.context.annotation.Lazy
+import org.springframework.data.cassandra.core.CassandraTemplate
+import org.springframework.data.cassandra.core.InsertOptions
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class CategoryService(
     private val categoryRepository: CategoryRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cassandraTemplate: CassandraTemplate,
 ) {
 
     fun getParentCategories(): List<Category> {
@@ -26,21 +29,48 @@ class CategoryService(
             ?.let { categoryRepository.findByParentName(parentName) }
             ?: throw CategoryNotFoundException(parentName)
 
-    fun createPaternalCategory(name: String): Category = Category(key = CategoryKey(name))
-        .takeIf {
-            val res = categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent)
-            res.wasApplied()
-        }
-        ?: throw CategoryAlreadyExistsException(name)
 
-    fun createChildCategory(parentName: String, name: String): Category =
-        categoryRepository.findByKeyName(parentName)?.let { parent ->
-            parent.isParent.takeIf { it }?.let {
-                Category(key = CategoryKey(name), parentName = parentName).takeIf {
-                    categoryRepository.saveIfNotExist(it.key.id, it.key.name, it.parentName, it.isParent).wasApplied()
-                } ?: throw CategoryAlreadyExistsException(name)
-            } ?: throw CategoryIsNotParentException(parentName)
-        } ?: throw CategoryNotFoundException(parentName)
+    fun createPaternalCategory(name: String): Category {
+        val key = categoryRepository.findByKeyName(name)?.key
+
+        if (key != null) {
+            throw CategoryAlreadyExistsException(name)
+        }
+
+        val category = Category(key = CategoryKey(name, UUID.randomUUID()))
+        val insertOptions = InsertOptions.builder().withIfNotExists().build()
+        val result = cassandraTemplate.insert(category, insertOptions)
+
+        if (!result.wasApplied()) {
+            throw CategoryAlreadyExistsException(name)
+        }
+
+        return category
+    }
+
+    fun createChildCategory(parentName: String, name: String): Category {
+        val parent = categoryRepository.findByKeyName(parentName)
+            ?: throw CategoryNotFoundException(parentName)
+        if (!parent.isParent) {
+            throw CategoryIsNotParentException(parentName)
+        }
+
+        val key = categoryRepository.findByKeyName(name)?.key
+        if (key != null) {
+            throw CategoryAlreadyExistsException(name)
+        }
+
+        val category = Category(key = CategoryKey(name, UUID.randomUUID()), parentName = parentName)
+        val insertOptions = InsertOptions.builder()
+            .withIfNotExists()
+            .build()
+        val result = cassandraTemplate.insert(category, insertOptions)
+        if (!result.wasApplied()) {
+            throw CategoryAlreadyExistsException(name)
+        }
+        return category
+    }
+
 
 
     fun getProductsByCategory(categoryName: String): List<Product> =

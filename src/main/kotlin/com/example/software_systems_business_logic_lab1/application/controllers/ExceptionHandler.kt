@@ -96,4 +96,9 @@ class ExceptionHandler {
         logger.error("Product is out of stock: ${ex.message}")
         return ResponseEntity.status(400).body(ex.message)
     }
+
+    @ExceptionHandler(InvalidDataException::class)
+    fun handleOutOfStock(ex: InvalidDataException): ResponseEntity<String> {
+        return ResponseEntity.status(400).body(ex.message)
+    }
 }

@@ -2,6 +2,7 @@ package com.example.software_systems_business_logic_lab1.application.services
 
 import com.example.software_systems_business_logic_lab1.application.models.User
 import com.example.software_systems_business_logic_lab1.application.models.UserAlreadyExistsException
+import com.example.software_systems_business_logic_lab1.application.models.UserNotFoundException
 import com.example.software_systems_business_logic_lab1.application.repos.UserRepository
 import org.springframework.stereotype.Service
 import java.util.*
@@ -25,8 +26,11 @@ class UserService(
         return userRepository.findUserByEmailOrPhoneNumber(email, phone)
     }
 
-    fun updateUserRole(user: User): Int {
-        return userRepository.update(user)
+    fun updateUserRole(user: User) {
+        val updated = userRepository.update(user)
+        if (updated == 0) {
+            throw UserNotFoundException()
+        }
     }
 
     fun getUserById(id: UUID): User? {

@@ -59,7 +59,7 @@ services:
 
   backend:
     container_name: 'backend-blps'
-    image: 'lunghr/blps-1:latest'
+    image: 'lunghr/blps-2:latest'
     build:
       context: .
       dockerfile: Dockerfile
@@ -74,7 +74,7 @@ services:
       SPRING_CASSANDRA_CONTACT_POINTS: ${SPRING_CASSANDRA_CONTACT_POINTS}
       SPRING_CASSANDRA_PORT: ${SPRING_CASSANDRA_PORT}
       SPRING_CASSANDRA_LOCAL_DATACENTER: ${SPRING_CASSANDRA_LOCAL_DATACENTER}
-      DB_URL: ${DB_URL}
+      DB_URL: ${DB_DOCKER_URL}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
     networks:

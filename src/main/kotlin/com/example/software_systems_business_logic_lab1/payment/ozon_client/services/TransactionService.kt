@@ -4,13 +4,14 @@ import com.example.software_systems_business_logic_lab1.application.models.Order
 import com.example.software_systems_business_logic_lab1.application.models.PaymentMethodNotFoundException
 import com.example.software_systems_business_logic_lab1.application.models.enums.OrderPaymentStatus
 import com.example.software_systems_business_logic_lab1.application.services.OrderService
+import com.example.software_systems_business_logic_lab1.application.services.WarehouseService
 import com.example.software_systems_business_logic_lab1.payment.bank.services.BankService
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.PaymentTransaction
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.enums.TransactionStatus
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.models.enums.TransactionStatus.Companion.toBoolean
 import com.example.software_systems_business_logic_lab1.payment.ozon_client.repos.PaymentTransactionRepository
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 
@@ -19,7 +20,8 @@ class TransactionService(
     private val transactionRepository: PaymentTransactionRepository,
     private val paymentMethodService: PaymentMethodService,
     private val orderService: OrderService,
-    private val bankService: BankService
+    private val bankService: BankService,
+    private val warehouseService: WarehouseService
 ) {
     @Transactional
     fun processTransaction(paymentMethodId: UUID, orderId: UUID): PaymentTransaction {
@@ -44,7 +46,10 @@ class TransactionService(
 
         val isSuccess = toBoolean(status)
         transaction.transactionStatus = if (isSuccess) {
-            status.also { orderService.changeOrderStatus(order, OrderPaymentStatus.PAID) }
+            status.also {
+                orderService.changeOrderStatus(order, OrderPaymentStatus.PAID)
+                warehouseService.decreaseStockQuantity(order)
+            }
         } else {
             TransactionStatus.FAILED.also { orderService.changeOrderStatus(order, OrderPaymentStatus.REFUND) }
         }

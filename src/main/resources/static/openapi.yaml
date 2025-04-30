@@ -1,143 +1,151 @@
 openapi: 3.0.1
 info:
-  title: Cart API
+  title: BLPS lab2 API
   version: 1.0.0
-
 servers:
-  - url: 'http://localhost:8080'
-
+  - url: http://localhost:8080
 security:
-  - BearerAuth: []
-
+  - BearerAuth: [ ]
+tags:
+  - name: Auth
+  - name: Category
+  - name: Product
+  - name: Cart
+  - name: Order
+  - name: Transaction
+  - name: Payment
+  - name: Bank
 paths:
-
-  #Cart
   /cart/get/{cartId}:
     get:
       summary: Get cart by id
       operationId: getCart
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
       responses:
         '200':
           description: Cart found
-
+      tags:
+        - Cart
   /cart/delete/{cartId}/{productId}:
     delete:
       summary: Delete product from cart
       description: Deletes product from cart by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+            example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
       responses:
         '200':
           description: Cart deleted
-
+      tags:
+        - Cart
   /cart/decrement/{cartId}/{productId}:
     patch:
       summary: Decrements product in cart
       description: Decrements product in cart by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+            example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
       responses:
         '200':
           description: Product incremented
-
+      tags:
+        - Cart
   /cart/increment/{cartId}/{productId}:
     patch:
       summary: Increments product in cart
       description: Increments product in cart by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+            example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
       responses:
         '200':
           description: Product incremented
-  
+      tags:
+        - Cart
   /cart/add/{cartId}/{productId}:
     post:
       summary: Add product to cart
       description: Adds product to cart by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: 'f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd'
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: 'e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f'
+            example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
       responses:
         '200':
           description: Product added
-
-  # OrderController
+      tags:
+        - Cart
   /order/create/{cartId}:
     post:
-      summary: "Create order"
-      description: "Creates order by cart id with chosen products from cart"
+      summary: Create order
+      description: Creates order by cart id with chosen products from cart
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: cartId
           in: path
           required: true
           schema:
             type: string
-            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
       requestBody:
         required: true
-        description: "List of product UUIDs"
+        description: List of product UUIDs
         content:
           application/json:
             schema:
@@ -145,232 +153,235 @@ paths:
               items:
                 type: string
               example:
-                - "e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f"
-                - "9c1e8a0e-3b4f-4f5e-8b1c-6d5f8a0e3b4f"
+                - e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f
+                - 9c1e8a0e-3b4f-4f5e-8b1c-6d5f8a0e3b4f
       responses:
         '200':
-          description: "Order created successfully"
-
-  #   CategoryController
+          description: Order created successfully
+      tags:
+        - Order
   /category/create/{categoryName}:
     post:
-      summary: "Create a new category"
-      description: "Creates a new category if it does not already exist"
+      summary: Create a new category
+      description: Creates a new category if it does not already exist
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: categoryName
           in: path
           required: true
           schema:
             type: string
-            example: "clothes"
+            example: clothes
       responses:
         '200':
-          description: "Category created"
-
+          description: Category created
+      tags:
+        - Category
   /category/create/{parentCategoryName}/{childCategoryName}:
     post:
-      summary: "Create a new child category"
-      description: "Creates a new child category under the specified parent category"
+      summary: Create a new child category
+      description: Creates a new child category under the specified parent category
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: parentCategoryName
           in: path
           required: true
           schema:
             type: string
-            example: "clothes"
+            example: clothes
         - name: childCategoryName
           in: path
           required: true
           schema:
             type: string
-            example: "shoes"
+            example: shoes
       responses:
         '200':
-          description: "Child category created"
-
+          description: Child category created
+      tags:
+        - Category
   /category/get:
     get:
-      summary: "Get all parents categories"
-      description: "Returns a list of all parents categories"
+      summary: Get all parents categories
+      description: Returns a list of all parents categories
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
-          description: "List of catalogs"
-
+          description: List of catalogs
+      tags:
+        - Category
   /category/get/{categoryName}:
     get:
-      summary: "Get all child categories of a category"
-      description: "Returns all child categories of the specified category"
+      summary: Get all child categories of a category
+      description: Returns all child categories of the specified category
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: categoryName
           in: path
           required: true
           schema:
             type: string
-            example: "clothes"
+            example: clothes
       responses:
         '200':
-          description: "List of child categories"
-
+          description: List of child categories
+      tags:
+        - Category
   /category/get/categories/{categoryName}/products:
     get:
-      summary: "Get products in category"
-      description: "Returns all products in the specified category"
+      summary: Get products in category
+      description: Returns all products in the specified category
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: categoryName
           in: path
           required: true
           schema:
             type: string
-            example: "clothes"
+            example: clothes
       responses:
         '200':
-          description: "List of products"
-
-  # ProductController
+          description: List of products
+      tags:
+        - Category
   /product/create:
     post:
-      summary: "Create a new product"
-      description: "Creates a new product with the given details"
+      summary: Create a new product
+      description: Creates a new product with the given details
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProductDto"
+              $ref: '#/components/schemas/ProductDto'
       responses:
         '200':
-          description: "Product created"
-
-  /product/quantity/{productId}/change/{quantity}:
+          description: Product created
+      tags:
+        - Product
+  /product/quantity/{productId}/change/{quantity}/{categoryId}:
     post:
-      summary: "Change product stock quantity"
-      description: "Changes the stock quantity of a product by id"
+      summary: Change product stock quantity
+      description: Changes the stock quantity of a product by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: "08150d93-1da7-41e8-b140-2a9341b60f6e"
+            example: 08150d93-1da7-41e8-b140-2a9341b60f6e
         - name: quantity
           in: path
           required: true
           schema:
             type: integer
             example: 10
-      requestBody:
-        required: true
-        description: "Name of the subcatalog"
-        content:
-          application/json:
-            schema:
-              type: string
-              example: "shoes"
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1893266b-017b-4f78-bc19-b381e5e1dd8a
       responses:
         '200':
-          description: "Product stock updated"
-
-  /product/quantity/{productId}/reduce/{quantity}:
+          description: Product stock updated
+      tags:
+        - Product
+  /product/quantity/{productId}/reduce/{quantity}/{categoryId}:
     post:
-      summary: "Reduce product stock quantity"
-      description: "Reduces the stock quantity of a product by id"
+      summary: Reduce product stock quantity
+      description: Reduces the stock quantity of a product by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: productId
           in: path
           required: true
           schema:
             type: string
-            example: "08150d93-1da7-41e8-b140-2a9341b60f6e"
+            example: 08150d93-1da7-41e8-b140-2a9341b60f6e
         - name: quantity
           in: path
           required: true
           schema:
             type: integer
             example: 5
-      requestBody:
-        required: true
-        description: "Name of the subcatalog"
-        content:
-          application/json:
-            schema:
-              type: string
-              example: "shoes"
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1893266b-017b-4f78-bc19-b381e5e1dd8a
       responses:
         '200':
-          description: "Product stock reduced"
-
-  # Auth and User Controller
+          description: Product stock reduced
+      tags:
+        - Product
   /auth/register-user:
     post:
-      summary: "Create a new user"
-      description: "Creates a new user with the given details"
+      summary: Create a new user
+      description: Creates a new user with the given details
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegisterRequestDto"
+              $ref: '#/components/schemas/RegisterRequestDto'
       responses:
         '200':
-          description: "User created"
-
+          description: User created
+      tags:
+        - Auth
   /auth/login:
     post:
-      summary: "User login"
-      description: "Logs in a user with the given credentials"
+      summary: User login
+      description: Logs in a user with the given credentials
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AuthRequestDto"
+              $ref: '#/components/schemas/AuthRequestDto'
       responses:
         '200':
-          description: "User login"
-
+          description: User login
+      tags:
+        - Auth
   /auth/change-role/{userId}:
     post:
-      summary: "Change user role"
-      description: "Changes the role of a user by id"
+      summary: Change user role
+      description: Changes the role of a user by id
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: userId
           in: path
           required: true
           schema:
             type: string
-            example: "d26af0f0-32a2-4f27-acf8-8816a5ae41c9"
+            example: d26af0f0-32a2-4f27-acf8-8816a5ae41c9
       requestBody:
         required: true
-        description: "New role of the user"
+        description: New role of the user
         content:
           application/json:
             schema:
               type: string
-              example: "ADMIN"
+              example: ADMIN
       responses:
         '200':
-          description: "User role changed"
-
-
-  #Bank
+          description: User role changed
+      tags:
+        - Auth
   /bank/create/bank-account:
     post:
       summary: Creates a bank account
@@ -378,7 +389,8 @@ paths:
       responses:
         '200':
           description: Bank account created
-
+      tags:
+        - Bank
   /bank/{accountNumber}/create/card:
     post:
       summary: Create new card
@@ -393,47 +405,49 @@ paths:
       responses:
         '200':
           description: Card created in account
-  
+      tags:
+        - Bank
   /bank/validate/{cardNumber}/{cvv}:
     post:
-      summary: "Method to validate card data"
-      description: "Validates the card data provided by the user from the client"
+      summary: Method to validate card data
+      description: Validates the card data provided by the user from the client
       parameters:
         - name: cardNumber
           in: path
           required: true
           schema:
             type: string
-            example: "1234567890123456"
+            example: '1234567890123456'
         - name: cvv
           in: path
           required: true
           schema:
             type: string
-            example: "123"
+            example: '123'
       requestBody:
         required: true
-        description: "Expiration date of the card"
+        description: Expiration date of the card
         content:
           application/json:
             schema:
               type: string
-              example: "12/25"
+              example: 12/25
       responses:
         '200':
           description: Card data validated
-
+      tags:
+        - Bank
   /bank/top-up/{cardNumber}/{amount}:
     post:
-      summary: "Top up account balance"
-      description: "Tops up the balance of the specified bank account by card number"
+      summary: Top up account balance
+      description: Tops up the balance of the specified bank account by card number
       parameters:
         - name: cardNumber
           in: path
           required: true
           schema:
             type: string
-            example: "885351475761580881"
+            example: '885351475761580881'
         - name: amount
           in: path
           required: true
@@ -444,11 +458,12 @@ paths:
       responses:
         '200':
           description: Bank account topped up
-
+      tags:
+        - Bank
   /bank/process-transaction/{transactionAmount}:
     post:
-      summary: "Process a payment transaction"
-      description: "Processes a payment transaction using the provided details"
+      summary: Process a payment transaction
+      description: Processes a payment transaction using the provided details
       parameters:
         - name: transactionAmount
           in: path
@@ -459,213 +474,235 @@ paths:
             example: 100.0
       requestBody:
         required: true
-        description: "Card data for the transaction"
+        description: Card data for the transaction
         content:
           application/json:
             schema:
               type: object
-              example: {
-                "id": "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd",
-                "cardNumber": "1234567890123456",
-                "cvv": "123",
-                "expirationDate": "12/25"
-              }
+              example:
+                id: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+                cardNumber: '1234567890123456'
+                cvv: '123'
+                expirationDate: 12/25
       responses:
         '200':
           description: Transaction processed
-
-  #PaymentMethodController
+      tags:
+        - Bank
   /payment/add/{userId}:
     post:
-      summary: "Add a new payment method"
-      description: "Adds a payment method (e.g. card) for the specified user"
+      summary: Add a new payment method
+      description: Adds a payment method (e.g. card) for the specified user
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: userId
           in: path
           required: true
           schema:
             type: string
-            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: paymentType
           in: query
           required: true
           schema:
             type: string
-            example: "CARD"
+            example: CARD
         - name: cardNumber
           in: query
           required: true
           schema:
             type: string
-            example: "1234567890123456"
+            example: '1234567890123456'
         - name: expirationDate
           in: query
           required: true
           schema:
             type: string
-            example: "12/25"
+            example: 12/25
         - name: cvv
           in: query
           required: true
           schema:
             type: string
-            example: "123"
+            example: '123'
       responses:
         '200':
-          description: "Payment method added successfully"
-
+          description: Payment method added successfully
+      tags:
+        - Payment
   /payment/get/all/{userId}:
     get:
-      summary: "Get all available user payment methods"
-      description: "Retrieves all payment methods for a specific user"
+      summary: Get all available user payment methods
+      description: Retrieves all payment methods for a specific user
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: userId
           in: path
           required: true
           schema:
             type: string
-            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
       responses:
         '200':
-          description: "All available user payment methods"
-
-  #TransactionController
+          description: All available user payment methods
+      tags:
+        - Payment
   /transaction/process/{orderId}/{paymentMethodId}:
     post:
-      summary: "Process a payment transaction"
-      description: "Processes a payment transaction using the provided details"
+      summary: Process a payment transaction
+      description: Processes a payment transaction using the provided details
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: orderId
           in: path
           required: true
           schema:
             type: string
-            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
         - name: paymentMethodId
           in: path
           required: true
           schema:
             type: string
-            example: "f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd"
+            example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
       responses:
         '200':
-          description: "Transaction processed"
+          description: Transaction processed
+      tags:
+        - Transaction
 
-# Регистрируем схемы для DTO
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
   schemas:
     ProductDto:
       type: object
       properties:
         name:
           type: string
-          example: "Zara shoes"
-          description: "Name of the product"
+          example: Zara shoes
+          description: Name of the product
         description:
           type: string
-          example: "Zara shoes Red"
-          description: "Description of the product"
+          example: Zara shoes Red
+          description: Description of the product
         price:
           type: number
           example: 99.9
-          description: "Price of the product"
+          description: Price of the product
         stockQuantity:
           type: integer
           example: 10000
-          description: "Stock quantity of the product"
+          description: Stock quantity of the product
         categoryId:
           type: string
-          example: "8ab0257e-d07d-477f-b713-45bc324e3b6e"
-          description: "Category ID of the product"
-
+          example: 8ab0257e-d07d-477f-b713-45bc324e3b6e
+          description: Category ID of the product
     UserDto:
       type: object
       properties:
         username:
           type: string
-          example: "Oleg Olegov"
-          description: "User full name"
+          example: Oleg Olegov
+          description: User full name
         password:
           type: string
-          example: "password123"
-          description: "User password"
+          example: password123
+          description: User password
         email:
           type: string
-          example: "test@gmail.com"
-          description: "User email"
+          example: test@gmail.com
+          description: User email
         phoneNumber:
           type: string
-          example: +1234567890
-          description: "User phone number"
-
+          example: 1234567890
+          description: User phone number
     RegisterRequestDto:
       type: object
       properties:
         username:
           type: string
-          example: "Oleg Olegov"
-          description: "User full name"
+          example: Oleg Olegov
+          description: User full name
           minLength: 3
           maxLength: 50
           x-constraints:
             - type: NotBlank
-              message: "Username must not be blank"
+              message: Username must not be blank
         email:
           type: string
-          example: "oleg@gmail.com"
-          description: "User email"
+          example: oleg@gmail.com
+          description: User email
           x-constraints:
             - type: Unique
-              message: "Email must be unique"
+              message: Email must be unique
             - type: NotBlank
-              message: "Email must not be blank"
+              message: Email must not be blank
         phoneNumber:
           type: string
-          example: "+1234567890"
-          description: "User phone number"
+          example: '+1234567890'
+          description: User phone number
           x-constraints:
             - type: NotBlank
-              message: "Phone number must not be blank"
+              message: Phone number must not be blank
             - type: Unique
-              message: "Phone number must be unique"
+              message: Phone number must be unique
         password:
           type: string
-          example: "password123"
-          description: "User password"
+          example: password123
+          description: User password
         role:
           type: string
-          example: "USER"
-          description: "User role"
+          example: USER
+          description: User role
           x-constraints:
             - type: NotBlank
-              message: "Role must not be blank"
-
+              message: Role must not be blank
     AuthRequestDto:
       type: object
       properties:
         username:
           type: string
-          example: "oleg@gmail.com"
-          description: "User email or phone number"
+          example: oleg@gmail.com
+          description: User email or phone number
           x-constraints:
             - type: NotBlank
-              message: "Username must not be blank"
+              message: Username must not be blank
         password:
           type: string
-          example: "password123"
-          description: "User password"
-
-
-
+          example: password123
+          description: User password
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Not found
+  parameters:
+    CartIdParam:
+      name: cartId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: f44ae0b6-7d28-4a78-8fc6-9532d96f6ccd
+    ProductIdParam:
+      name: productId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: e7b2f8a0-3c4d-4f5e-8b1c-6d5f8a0e3b4f

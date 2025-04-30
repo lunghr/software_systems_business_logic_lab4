@@ -8,10 +8,10 @@ import java.util.*
 
 @PrimaryKeyClass
 data class CategoryKey(
-    @PrimaryKeyColumn(name = "category_name", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
+    @PrimaryKeyColumn(name = "category_name", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     val name: String,
 
-    @PrimaryKeyColumn(name = "category_id", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
+    @PrimaryKeyColumn(name = "category_id", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
     val id: UUID = UUID.randomUUID()
 
 )

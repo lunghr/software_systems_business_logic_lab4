@@ -26,7 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 class SecurityConfig(
     private var userService: UserService,
-    private var jwtService: JwtService
+    private var jwtService: JwtService,
+    private val customAccessDeniedHandler: CustomAccessDeniedHandler
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -62,9 +63,12 @@ class SecurityConfig(
                     .requestMatchers("/notifications/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/swagger-resources/", "/v3/api-docs/**","/openapi.yaml").permitAll()
                     .requestMatchers("/category/create/**").hasAnyAuthority("ADMIN", "MODERATOR")
-                    .requestMatchers("/product/**").hasAuthority("TRADER")
+                    .requestMatchers("/product/**").hasAnyAuthority("TRADER", "ADMIN")
                     .requestMatchers("/auth/change-role/**").hasAuthority("ADMIN")//
                     .anyRequest().authenticated()
+            }
+            .exceptionHandling { exceptionHandling ->
+                exceptionHandling.accessDeniedHandler(customAccessDeniedHandler)
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider())

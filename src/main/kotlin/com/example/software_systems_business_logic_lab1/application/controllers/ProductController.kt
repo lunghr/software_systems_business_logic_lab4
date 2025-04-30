@@ -21,17 +21,18 @@ class ProductController(
         return productService.createProduct(productDto)
     }
 
-    @PostMapping("/quantity/{productId}/change/{quantity}")
+ // I wrote this awkwardly just for easy testing
+    @PostMapping("/quantity/{productId}/change/{quantity}/{categoryId}")
     fun changeProductStockQuantity(
         @PathVariable productId: UUID,
-        @PathVariable quantity: Int,
-        @RequestBody categoryId:UUID
-    ) = productService.changeProductStockQuantity(productId, categoryId, quantity)
+        @PathVariable categoryId: UUID,
+        @PathVariable quantity: Int
+ ) = productService.changeProductStockQuantity(productId, categoryId, quantity)
 
-    @PostMapping("/quantity/{productId}/reduce/{quantity}")
+    @PostMapping("/quantity/{productId}/reduce/{quantity}/{categoryId}")
     fun reduceProductStockQuantity(
         @PathVariable productId: UUID,
-        @RequestBody categoryId: UUID,
+        @PathVariable categoryId: UUID,
         @PathVariable quantity: Int
     ) = productService.reduceProductStockQuantity(productId, categoryId, quantity)
 
