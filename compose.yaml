@@ -82,7 +82,6 @@ services:
 
   zookeeper:
     image: bitnami/zookeeper:3.8
-    container_name: zookeeper
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
@@ -92,7 +91,6 @@ services:
 
   kafka:
     image: bitnami/kafka:3.5
-    container_name: kafka
     ports:
       - "9092:9092"
     environment:
