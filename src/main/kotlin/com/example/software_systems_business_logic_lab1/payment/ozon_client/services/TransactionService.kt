@@ -50,7 +50,7 @@ class TransactionService(
         transaction.transactionStatus = if (isSuccess) {
             status.also {
                 orderService.changeOrderStatus(order, OrderPaymentStatus.PAID)
-                warehouseService.decreaseStockQuantity(order)
+//                warehouseService.decreaseStockQuantity(order)
             }
         } else {
             TransactionStatus.FAILED.also { orderService.changeOrderStatus(order, OrderPaymentStatus.REFUND) }

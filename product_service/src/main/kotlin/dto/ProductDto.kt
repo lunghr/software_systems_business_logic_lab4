@@ -1,8 +1,7 @@
-package com.example.software_systems_business_logic_lab1.application.dto
+package com.example.dto
 
-
-import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.models.key_classes.ProductCategoryKey
+import com.example.model.Product
+import com.example.model.key_class.ProductCategoryKey
 import java.util.UUID
 
 

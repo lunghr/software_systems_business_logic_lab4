@@ -39,11 +39,11 @@ class CatalogController(
         return categoryService.getChildrenOfCategory(categoryName).map { it.key.name }
     }
 
-    @GetMapping("/get/categories/{categoryName}/products")
-    fun getProducts(
-        @PathVariable categoryName: String
-    ): List<Product> {
-        return categoryService.getProductsByCategory(categoryName)
-    }
+//    @GetMapping("/get/categories/{categoryName}/products")
+//    fun getProducts(
+//        @PathVariable categoryName: String
+//    ): List<Product> {
+//        return categoryService.getProductsByCategory(categoryName)
+//    }
 
 }

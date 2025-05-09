@@ -14,10 +14,10 @@ import java.util.UUID
 class CartController(
     private val cartService: CartService
 ) {
-    @GetMapping("/get/{cartId}")
-    fun getCart(
-        @PathVariable cartId: UUID
-    ) = cartService.getCart(cartId)
+//    @GetMapping("/get/{cartId}")
+//    fun getCart(
+//        @PathVariable cartId: UUID
+//    ) = cartService.getCart(cartId)
 
     @DeleteMapping("/delete/{cartId}/{productId}")
     fun deleteProductFromCart(
@@ -31,16 +31,16 @@ class CartController(
         @PathVariable productId: UUID
     ) = cartService.decrementProductQuantity(cartId, productId)
 
-    @PatchMapping("/increment/{cartId}/{productId}")
-    fun incrementProductFromCart(
-        @PathVariable cartId: UUID,
-        @PathVariable productId: UUID
-    ) = cartService.incrementProductQuantity(cartId, productId)
-
-    @PostMapping("/add/{cartId}/{productId}")
-    fun addProductToCart(
-        @PathVariable cartId: UUID,
-        @PathVariable productId: UUID
-    ) = cartService.addProductToCart(cartId, productId)
+//    @PatchMapping("/increment/{cartId}/{productId}")
+//    fun incrementProductFromCart(
+//        @PathVariable cartId: UUID,
+//        @PathVariable productId: UUID
+//    ) = cartService.incrementProductQuantity(cartId, productId)
+//
+//    @PostMapping("/add/{cartId}/{productId}")
+//    fun addProductToCart(
+//        @PathVariable cartId: UUID,
+//        @PathVariable productId: UUID
+//    ) = cartService.addProductToCart(cartId, productId)
 
 }

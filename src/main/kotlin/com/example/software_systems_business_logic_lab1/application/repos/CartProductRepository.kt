@@ -7,6 +7,7 @@ import org.springframework.data.cassandra.repository.CassandraRepository
 import org.springframework.data.cassandra.repository.Query
 import java.util.*
 
+
 interface CartProductRepository: CassandraRepository<CartProduct, CartProductKey> {
 
     fun findCartProductByKeyCartIdAndKeyProductId(cartId: UUID, productId: UUID): CartProduct?

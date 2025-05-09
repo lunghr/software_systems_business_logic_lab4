@@ -1,12 +1,10 @@
-package com.example.software_systems_business_logic_lab1.application.services
+package com.example.service
 
-import com.example.software_systems_business_logic_lab1.application.dto.ProductDto
-import com.example.software_systems_business_logic_lab1.application.models.CategoryIsParentException
-import com.example.software_systems_business_logic_lab1.application.models.CategoryNotFoundException
-import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.models.ProductNotFoundException
-import com.example.software_systems_business_logic_lab1.application.repos.CategoryRepository
-import com.example.software_systems_business_logic_lab1.application.repos.ProductRepository
+import com.example.dto.ProductDto
+import com.example.model.Product
+import com.example.repos.ProductRepository
+import com.example.tmp.CategoryService
+
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -19,13 +17,14 @@ class ProductService(
     fun createProduct(productDto: ProductDto): Product =
         categoryService.getCategoryById(productDto.categoryId).takeIf { categoryService.isAvailableToAddProduct(it) }
             ?.let { productRepository.save(productDto.toProduct()) }
-            ?: throw CategoryIsParentException(productDto.categoryId.toString())
-
+//            ?: throw CategoryIsParentException(productDto.categoryId.toString())
+            ?: throw RuntimeException("Category is parent")
 
     fun isAvailableToOrder(productId: UUID, quantity: Int): Boolean {
         return productRepository.findProductByKeyProductId(productId)?.let {
             it.stockQuantity > 0 && (it.stockQuantity - quantity) >= 0
-        } ?: throw ProductNotFoundException()
+//        } ?: throw ProductNotFoundException()
+        } ?: false
     }
 
     fun changeProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {
@@ -35,7 +34,8 @@ class ProductService(
 
     fun reduceProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {
         val product = productRepository.findProductByKeyProductIdAndKeyCategoryId(productId, categoryId)
-            ?: throw ProductNotFoundException()
+//            ?: throw ProductNotFoundException()
+            ?: throw RuntimeException("Product not found")
 
         if (product.stockQuantity < quantity) {
             return false
@@ -55,7 +55,7 @@ class ProductService(
         return productRepository.findProductsByIds(productIds)
     }
 
-    fun delete(product: Product){
+    fun delete(product: Product) {
         productRepository.delete(product)
     }
 

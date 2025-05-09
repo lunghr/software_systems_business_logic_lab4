@@ -1,7 +1,8 @@
-package com.example.software_systems_business_logic_lab1.application.repos
+package com.example.repos
 
-import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.models.key_classes.ProductCategoryKey
+
+import com.example.model.Product
+import com.example.model.key_class.ProductCategoryKey
 import org.springframework.data.cassandra.repository.CassandraRepository
 import org.springframework.data.cassandra.repository.Query
 import java.util.UUID
@@ -23,8 +24,5 @@ interface ProductRepository : CassandraRepository<Product, ProductCategoryKey> {
     fun findProductsByIds(productIds: List<UUID>): List<Product>
 
     fun findProductsByKeyCategoryId(categoryID: UUID): List<Product>
-
-
-
 
 }

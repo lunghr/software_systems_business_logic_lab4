@@ -16,7 +16,8 @@ import javax.sql.DataSource
 class DataSourceConfig {
 
     private var dotenv = Dotenv.load()
-    private var dbUrl = dotenv.get("DB_LOCAL_URL")
+//    private var dbUrl = dotenv.get("DB_LOCAL_URL")
+    private var dbUrl = dotenv.get("DB_DOCKER_URL")
     private var dbUser = dotenv.get("DB_USERNAME")
     private var dbPassword = dotenv.get("DB_PASSWORD")
 

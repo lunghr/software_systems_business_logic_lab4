@@ -1,4 +1,5 @@
 FROM amazoncorretto:21-alpine-jdk
+#ENTRYPOINT ["sleep", "infinity"]
 WORKDIR /app
 
 COPY gradle gradle

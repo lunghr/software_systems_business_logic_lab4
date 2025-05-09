@@ -13,23 +13,23 @@ import java.util.UUID
 @Service
 class OrderService(
     private val cartService: CartService,
-    private val productService: ProductService,
+//    private val productService: ProductService,
     private val cassandraTemplate: CassandraTemplate,
     private val orderRepository: OrderRepository,
 ) {
-    fun createOrder(cartId: UUID, products: List<UUID>): Order {
-        products.forEach { println(it) }
-        val cart = getOnlyValidProducts(cartService.getCart(cartId))
-        val productsUUIDs = getListOfUUIDs(cart)
-        require(products.all { it in productsUUIDs }) { throw ProductNotFoundException() }
-
-        val orderProductsList = cart.filter { it.key.productId in products }
-        val order = toOrder(cartService.getUser(cartId)).also {
-            it.totalPrice = calculateTotalPrice(orderProductsList)
-        }
-        moveToOrder(cartId, orderProductsList, order.id)
-        return orderRepository.save(order)
-    }
+//    fun createOrder(cartId: UUID, products: List<UUID>): Order {
+//        products.forEach { println(it) }
+//        val cart = getOnlyValidProducts(cartService.getCart(cartId))
+//        val productsUUIDs = getListOfUUIDs(cart)
+//        require(products.all { it in productsUUIDs }) { throw ProductNotFoundException() }
+//
+//        val orderProductsList = cart.filter { it.key.productId in products }
+//        val order = toOrder(cartService.getUser(cartId)).also {
+//            it.totalPrice = calculateTotalPrice(orderProductsList)
+//        }
+//        moveToOrder(cartId, orderProductsList, order.id)
+//        return orderRepository.save(order)
+//    }
 
 
     private fun moveToOrder(cartId: UUID, products: List<CartProduct>, orderId: UUID) {
@@ -44,14 +44,14 @@ class OrderService(
     }
 
 
-    private fun calculateTotalPrice(productsList: List<CartProduct>): Double {
-        val products = productService.getProductsByUUIds(getListOfUUIDs(productsList))
-        return products.sumOf { product ->
-            productsList.find { it.key.productId == product.key.productId }?.let { cartProduct ->
-                product.price * cartProduct.quantity
-            } ?: 0.0
-        }
-    }
+//    private fun calculateTotalPrice(productsList: List<CartProduct>): Double {
+//        val products = productService.getProductsByUUIds(getListOfUUIDs(productsList))
+//        return products.sumOf { product ->
+//            productsList.find { it.key.productId == product.key.productId }?.let { cartProduct ->
+//                product.price * cartProduct.quantity
+//            } ?: 0.0
+//        }
+//    }
 
     fun getOrderById(orderId: UUID): Order? {
         return orderRepository.findById(orderId).orElse(null)

@@ -1,8 +1,8 @@
-package com.example.software_systems_business_logic_lab1.application.controllers
+package com.example.controller
 
-import com.example.software_systems_business_logic_lab1.application.dto.ProductDto
-import com.example.software_systems_business_logic_lab1.application.models.Product
-import com.example.software_systems_business_logic_lab1.application.services.ProductService
+import com.example.dto.ProductDto
+import com.example.model.Product
+import com.example.service.ProductService
 import org.springframework.web.bind.annotation.*
 
 import java.util.UUID

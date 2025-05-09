@@ -1,7 +1,6 @@
-package com.example.software_systems_business_logic_lab1.application.models
+package com.example.model
 
-
-import com.example.software_systems_business_logic_lab1.application.models.key_classes.ProductCategoryKey
+import com.example.model.key_class.ProductCategoryKey
 import org.springframework.data.cassandra.core.mapping.PrimaryKey
 import org.springframework.data.cassandra.core.mapping.Table
 

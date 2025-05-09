@@ -11,10 +11,10 @@ import java.util.UUID
 class OrderController(
      private val orderService: OrderService
 ) {
-    @PostMapping("/create/{cartId}")
-    fun createOrder(
-        @PathVariable cartId: UUID,
-        @RequestBody products: List<UUID>
-    ) = orderService.createOrder(cartId, products)
+//    @PostMapping("/create/{cartId}")
+//    fun createOrder(
+//        @PathVariable cartId: UUID,
+//        @RequestBody products: List<UUID>
+//    ) = orderService.createOrder(cartId, products)
 
 }

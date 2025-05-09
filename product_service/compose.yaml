@@ -1,0 +1,47 @@
+services:
+  cassandra_product:
+    container_name: cassandra_product
+    image: cassandra:latest
+    environment:
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    ports:
+      - '9043:9042'
+    volumes:
+      - cassandra_product_data:/var/lib/cassandra
+    expose:
+      - '9043'
+    networks:
+      - app_network
+
+  product_service_backend:
+    container_name: product_service_backend
+    image: lunghr/blps-3-product:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8080'
+    depends_on:
+      cassandra_product:
+        condition: service_healthy
+    environment:
+      - SPRING_CASSANDRA_CONTACT_POINTS=cassandra_product
+      - SPRING_CASSANDRA_PORT=9042
+      - SPRING_CASSANDRA_LOCAL_DATACENTER=datacenter1
+    networks:
+      - app_network
+
+
+networks:
+  app_network:
+    external: true
+
+volumes:
+  cassandra_product_data: { }
