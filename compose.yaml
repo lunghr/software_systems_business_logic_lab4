@@ -57,28 +57,28 @@ services:
       - app_network
 
 
-  backend:
-    container_name: 'backend-blps'
-    image: 'lunghr/blps-3:latest'
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'
-    depends_on:
-      database_cassandra:
-        condition: service_healthy
-      database_postgres:
-        condition: service_healthy
-    environment:
-      SPRING_CASSANDRA_CONTACT_POINTS: ${SPRING_CASSANDRA_CONTACT_POINTS}
-      SPRING_CASSANDRA_PORT: ${SPRING_CASSANDRA_PORT}
-      SPRING_CASSANDRA_LOCAL_DATACENTER: ${SPRING_CASSANDRA_LOCAL_DATACENTER}
-      DB_URL: ${DB_DOCKER_URL}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-    networks:
-      - app_network
+#  backend:
+#    container_name: 'backend-blps'
+#    image: 'lunghr/blps-3:latest'
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - '8080:8080'
+#    depends_on:
+#      database_cassandra:
+#        condition: service_healthy
+#      database_postgres:
+#        condition: service_healthy
+#    environment:
+#      SPRING_CASSANDRA_CONTACT_POINTS: ${SPRING_CASSANDRA_CONTACT_POINTS}
+#      SPRING_CASSANDRA_PORT: ${SPRING_CASSANDRA_PORT}
+#      SPRING_CASSANDRA_LOCAL_DATACENTER: ${SPRING_CASSANDRA_LOCAL_DATACENTER}
+#      DB_URL: ${DB_DOCKER_URL}
+#      DB_USERNAME: ${DB_USERNAME}
+#      DB_PASSWORD: ${DB_PASSWORD}
+#    networks:
+#      - app_network
 
   zookeeper:
     image: bitnami/zookeeper:3.8

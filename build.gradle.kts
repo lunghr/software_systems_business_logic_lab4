@@ -34,7 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-cassandra")
     implementation("com.atomikos:transactions-spring-boot3-starter:6.0.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.jsonwebtoken:jjwt:0.12.6")
     implementation("org.springframework.kafka:spring-kafka")

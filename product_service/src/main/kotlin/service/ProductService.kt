@@ -3,7 +3,6 @@ package com.example.service
 import com.example.dto.ProductDto
 import com.example.model.Product
 import com.example.repos.ProductRepository
-import com.example.tmp.CategoryService
 
 import org.springframework.stereotype.Service
 import java.util.UUID

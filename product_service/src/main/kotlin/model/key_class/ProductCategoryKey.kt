@@ -1,5 +1,6 @@
 package com.example.model.key_class
 
+
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn

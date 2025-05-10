@@ -1,0 +1,44 @@
+services:
+  auth_postgres:
+    container_name: auth_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata_auth:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    networks:
+      - app_network
+
+  auth_service_backend:
+    image: lunghr/blps-3-auth:latest
+    container_name: auth_service_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8082:8080'
+    depends_on:
+      auth_postgres:
+        condition: service_healthy
+    networks:
+      - app_network
+
+
+networks:
+  app_network:
+    external: true
+
+volumes:
+  pgdata_auth: { }

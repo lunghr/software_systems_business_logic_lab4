@@ -24,9 +24,6 @@ class PaymentMethodNotFoundException :
 class PaymentMethodAlreadyExistsException :
     RuntimeException("Payment already added in your account")
 
-class UserNotFoundException :
-    RuntimeException("User not found")
-
 class InvalidCardDataException :
     RuntimeException("Invalid card data")
 
@@ -45,8 +42,6 @@ class CardCreationException :
 class BankAccountNotFoundException :
     RuntimeException("Bank account not found")
 
-class UserAlreadyExistsException :
-    RuntimeException("User with this email or phone already exists")
 
 class CartNotFoundException :
     RuntimeException("Cart not found")
@@ -54,5 +49,3 @@ class CartNotFoundException :
 class OutOfStockException :
     RuntimeException("Product is out of stock")
 
-class InvalidDataException :
-    RuntimeException("Invalid role")

@@ -1,5 +1,6 @@
 package com.example.model
 
+
 import com.example.model.key_class.ProductCategoryKey
 import org.springframework.data.cassandra.core.mapping.PrimaryKey
 import org.springframework.data.cassandra.core.mapping.Table
