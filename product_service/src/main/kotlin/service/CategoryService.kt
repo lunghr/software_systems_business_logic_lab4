@@ -1,8 +1,7 @@
 package com.example.service
 
 
-import com.example.model.Category
-import com.example.model.Product
+import com.example.model.*
 import com.example.repos.CategoryRepository
 import com.example.repos.ProductRepository
 import com.example.model.key_class.CategoryKey
@@ -22,22 +21,19 @@ class CategoryService(
         return categoryRepository.findAll().filter { it.parentName == null }
 
             .takeIf { it.isNotEmpty() }
-//            ?: throw NoParentCategoriesFoundException()
-            ?: throw RuntimeException("No parent categories found")
+            ?: throw NoParentCategoriesFoundException()
     }
 
     fun getChildrenOfCategory(parentName: String): List<Category> =
         categoryRepository.findByKeyName(parentName)
             ?.let { categoryRepository.findByParentName(parentName) }
-//            ?: throw CategoryNotFoundException(parentName)
-            ?: throw RuntimeException("Category not found")
+            ?: throw CategoryNotFoundException(parentName)
 
     fun createPaternalCategory(name: String): Category {
         val key = categoryRepository.findByKeyName(name)?.key
 
         if (key != null) {
-//            throw CategoryAlreadyExistsException(name)
-            throw RuntimeException("Category already exists")
+            throw CategoryAlreadyExistsException(name)
         }
 
         val category = Category(key = CategoryKey(name, UUID.randomUUID()))
@@ -45,8 +41,7 @@ class CategoryService(
         val result = cassandraTemplate.insert(category, insertOptions)
 
         if (!result.wasApplied()) {
-//            throw CategoryAlreadyExistsException(name)
-            throw RuntimeException("Category already exists")
+            throw CategoryAlreadyExistsException(name)
         }
 
         return category
@@ -54,17 +49,14 @@ class CategoryService(
 
     fun createChildCategory(parentName: String, name: String): Category {
         val parent = categoryRepository.findByKeyName(parentName)
-//            ?: throw CategoryNotFoundException(parentName)
-            ?: throw RuntimeException("Category not found")
+            ?: throw CategoryNotFoundException(parentName)
         if (!parent.isParent) {
-//            throw CategoryIsNotParentException(parentName)
-            throw RuntimeException("Category is not parent")
+            throw CategoryIsNotParentException(parentName)
         }
 
         val key = categoryRepository.findByKeyName(name)?.key
         if (key != null) {
-//            throw CategoryAlreadyExistsException(name)
-            throw RuntimeException("Category already exists")
+            throw CategoryAlreadyExistsException(name)
         }
 
         val category = Category(key = CategoryKey(name, UUID.randomUUID()), parentName = parentName)
@@ -73,8 +65,7 @@ class CategoryService(
             .build()
         val result = cassandraTemplate.insert(category, insertOptions)
         if (!result.wasApplied()) {
-//            throw CategoryAlreadyExistsException(name)
-            throw RuntimeException("Category already exists")
+            throw CategoryAlreadyExistsException(name)
         }
         return category
     }
@@ -84,16 +75,14 @@ class CategoryService(
         categoryRepository.findByKeyName(categoryName)?.let { category ->
             category.takeIf { !it.isParent }
                 ?.let { productRepository.findProductsByKeyCategoryId(category.key.id) }
-//                ?: throw CategoryIsParentException(categoryName)
-//        } ?: throw CategoryNotFoundException(categoryName)
-        } ?: throw RuntimeException("Category not found")
-            ?: throw RuntimeException("Category is parent")
+                ?: throw CategoryIsParentException(categoryName)
+        } ?: throw CategoryNotFoundException(categoryName)
+
     //TODO exception with incorrect id
 
     fun getCategoryById(id: UUID): Category =
         categoryRepository.findCategoryByKeyId(id)
-//            ?: throw CategoryNotFoundException(id.toString())
-            ?: throw RuntimeException("Category not found")
+            ?: throw CategoryNotFoundException(id.toString())
 
     fun isAvailableToAddProduct(category: Category): Boolean = when {
         !category.isParent -> true

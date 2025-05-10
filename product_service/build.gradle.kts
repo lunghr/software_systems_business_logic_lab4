@@ -15,7 +15,9 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-data-cassandra")
     implementation("io.github.cdimascio:dotenv-java:3.0.0")

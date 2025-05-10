@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework:spring-context:6.1.14")
-    implementation("org.springframework.security:spring-security-web:6.1.4")
+    implementation("org.springframework.security:spring-security-web:6.3.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.cdimascio:dotenv-java:3.0.0")

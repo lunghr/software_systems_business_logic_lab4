@@ -36,7 +36,7 @@ class AuthService(
             .claims(claims)
             .issuedAt(Date(System.currentTimeMillis()))
             .expiration(Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-            .signWith(jwtService.getSigningKey())
+            .signWith(jwtService.signingKey)
             .compact()
     }
 

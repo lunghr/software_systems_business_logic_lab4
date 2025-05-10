@@ -1,17 +1,20 @@
 package com.example.service
 
 import com.example.dto.ProductDto
+import com.example.model.CategoryIsParentException
 import com.example.model.Product
+import com.example.model.ProductNotFoundException
 import com.example.repos.ProductRepository
+
 
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class ProductService(
-    private val productRepository: ProductRepository, private val categoryService: CategoryService,
+    private var productRepository: ProductRepository,
+    private val categoryService: CategoryService,
     private val productEventPublisher: ProductEventPublisher
-
 ) {
 
     fun createProduct(productDto: ProductDto): Product =
@@ -21,14 +24,13 @@ class ProductService(
                     productEventPublisher.send(it)
                 }
             }
-//            ?: throw CategoryIsParentException(productDto.categoryId.toString())
-            ?: throw RuntimeException("Category is parent")
+            ?: throw CategoryIsParentException(productDto.categoryId.toString())
 
     fun isAvailableToOrder(productId: UUID, quantity: Int): Boolean {
         return productRepository.findProductByKeyProductId(productId)?.let {
             it.stockQuantity > 0 && (it.stockQuantity - quantity) >= 0
-//        } ?: throw ProductNotFoundException()
-        } ?: false
+        } ?: throw ProductNotFoundException()
+
     }
 
     fun changeProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {
@@ -38,8 +40,7 @@ class ProductService(
 
     fun reduceProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {
         val product = productRepository.findProductByKeyProductIdAndKeyCategoryId(productId, categoryId)
-//            ?: throw ProductNotFoundException()
-            ?: throw RuntimeException("Product not found")
+            ?: throw ProductNotFoundException()
 
         if (product.stockQuantity < quantity) {
             return false

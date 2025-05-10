@@ -6,25 +6,23 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.util.*
 import javax.crypto.spec.SecretKeySpec
 
 
-@Component
+@Service
 class JwtService {
-    private var secret: String = Dotenv.load().get("SECRET_KEY")
+    private var secret: String = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855"
 
-    private val signingKey: SecretKeySpec
+    val signingKey: SecretKeySpec
         get() {
             val keyBytes = Decoders.BASE64.decode(secret)
             return SecretKeySpec(keyBytes, 0, keyBytes.size, "HmacSHA256")
         }
 
-    fun getSigningKey(): SecretKeySpec {
-        return signingKey
-    }
 
-    private fun parseToken(token: String): Claims =
+    fun parseToken(token: String): Claims =
         Jwts.parser()
             .setSigningKey(signingKey)
             .build()
@@ -39,11 +37,6 @@ class JwtService {
 
     fun getTokenFromHeader(request: HttpServletRequest): String? =
         request.getHeader("Authorization")?.takeIf { it.startsWith("Bearer ") }?.let { extractToken(it) }
-
-    fun validateToken(token: String, userDetails: org.springframework.security.core.userdetails.UserDetails): Boolean {
-        val username = getUsername(token)
-        return (username == userDetails.username && !isTokenExpired(token))
-    }
 
     fun getUsername(token: String): String = parseToken(token).subject
 
