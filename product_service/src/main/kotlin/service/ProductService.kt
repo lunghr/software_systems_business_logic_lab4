@@ -10,13 +10,18 @@ import java.util.UUID
 
 @Service
 class ProductService(
-    private val productRepository: ProductRepository, private val categoryService: CategoryService
+    private val productRepository: ProductRepository, private val categoryService: CategoryService,
+    private val productEventPublisher: ProductEventPublisher
 
 ) {
 
     fun createProduct(productDto: ProductDto): Product =
         categoryService.getCategoryById(productDto.categoryId).takeIf { categoryService.isAvailableToAddProduct(it) }
-            ?.let { productRepository.save(productDto.toProduct()) }
+            ?.let {
+                productRepository.save(productDto.toProduct()).also {
+                    productEventPublisher.send(it)
+                }
+            }
 //            ?: throw CategoryIsParentException(productDto.categoryId.toString())
             ?: throw RuntimeException("Category is parent")
 
