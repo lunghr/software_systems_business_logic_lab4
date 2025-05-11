@@ -1,5 +1,6 @@
 package com.example.service
 
+import com.example.kafka.CartServiceProducer
 import com.example.model.User
 import com.example.model.UserAlreadyExistsException
 import com.example.model.UserNotFoundException
@@ -10,11 +11,12 @@ import java.util.*
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val cartServiceProducer: CartServiceProducer
 ) {
 
     fun createUser(user: User): User {
         try {
-            return userRepository.save(user)
+            return userRepository.save(user).also { cartServiceProducer.sendUserCreationNotification(it.id) }
         } catch (e: Exception) {
             throw UserAlreadyExistsException()
         }
@@ -36,7 +38,7 @@ class UserService(
         return userRepository.findUserById(id)
     }
 
-    fun delete(user: User){
+    fun delete(user: User) {
         userRepository.delete(user)
     }
 

@@ -7,3 +7,4 @@ rootProject.name = "software_systems_business_logic_lab1"
 include("product_service")
 include("common")
 include("auth_service")
+include("cart_service")

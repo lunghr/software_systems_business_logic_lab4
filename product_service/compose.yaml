@@ -1,6 +1,6 @@
 services:
-  cassandra_product:
-    container_name: cassandra_product
+  product_cassandra:
+    container_name: product_cassandra
     image: cassandra:latest
     environment:
       - CASSANDRA_DC=datacenter1
@@ -29,10 +29,10 @@ services:
     ports:
       - '8081:8080'
     depends_on:
-      cassandra_product:
+      product_cassandra:
         condition: service_healthy
     environment:
-      - SPRING_CASSANDRA_CONTACT_POINTS=cassandra_product
+      - SPRING_CASSANDRA_CONTACT_POINTS=product_cassandra
       - SPRING_CASSANDRA_PORT=9042
       - SPRING_CASSANDRA_LOCAL_DATACENTER=datacenter1
     networks:

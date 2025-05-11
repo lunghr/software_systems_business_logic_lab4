@@ -21,7 +21,6 @@ class JwtService {
             return SecretKeySpec(keyBytes, 0, keyBytes.size, "HmacSHA256")
         }
 
-
     fun parseToken(token: String): Claims =
         Jwts.parser()
             .setSigningKey(signingKey)
@@ -29,15 +28,14 @@ class JwtService {
             .parseClaimsJws(token)
             .body
 
+    fun extractId(token: String): UUID = UUID.fromString(parseToken(token)["id"].toString())
+
     private fun getExpiration(token: String): Date = parseToken(token).expiration
 
-    private fun isTokenExpired(token: String): Boolean = getExpiration(token) < Date()
-
-    private fun extractToken(token: String): String = token.removePrefix("Bearer ")
+    fun extractToken(token: String): String = token.removePrefix("Bearer ")
 
     fun getTokenFromHeader(request: HttpServletRequest): String? =
         request.getHeader("Authorization")?.takeIf { it.startsWith("Bearer ") }?.let { extractToken(it) }
 
-    fun getUsername(token: String): String = parseToken(token).subject
 
 }

@@ -14,23 +14,19 @@ import java.util.UUID
 class ProductService(
     private var productRepository: ProductRepository,
     private val categoryService: CategoryService,
-    private val productEventPublisher: ProductEventPublisher
 ) {
 
     fun createProduct(productDto: ProductDto): Product =
         categoryService.getCategoryById(productDto.categoryId).takeIf { categoryService.isAvailableToAddProduct(it) }
             ?.let {
-                productRepository.save(productDto.toProduct()).also {
-                    productEventPublisher.send(it)
-                }
+                productRepository.save(productDto.toProduct())
             }
             ?: throw CategoryIsParentException(productDto.categoryId.toString())
 
-    fun isAvailableToOrder(productId: UUID, quantity: Int): Boolean {
-        return productRepository.findProductByKeyProductId(productId)?.let {
-            it.stockQuantity > 0 && (it.stockQuantity - quantity) >= 0
-        } ?: throw ProductNotFoundException()
-
+    fun isAvailableToOrder(productId: UUID, quantity: Int): Pair<Boolean, Boolean> {
+        val product = productRepository.findProductByKeyProductId(productId)
+            ?: return Pair(false, false)
+        return if (product.stockQuantity < quantity) Pair(true, false) else Pair(true, true)
     }
 
     fun changeProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {
