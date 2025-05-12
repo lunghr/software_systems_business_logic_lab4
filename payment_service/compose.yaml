@@ -1,0 +1,44 @@
+services:
+  payment_postgres:
+    container_name: payment_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    ports:
+      - '5436:5432'
+    volumes:
+      - pgdata_payment:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    networks:
+      - app_network
+
+  payment_service_backend:
+    image: lunghr/blps-3-payment:latest
+    container_name: payment_service_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8085:8080'
+    depends_on:
+      payment_postgres:
+        condition: service_healthy
+    networks:
+      - app_network
+
+
+networks:
+  app_network:
+    external: true
+
+volumes:
+  pgdata_payment: { }

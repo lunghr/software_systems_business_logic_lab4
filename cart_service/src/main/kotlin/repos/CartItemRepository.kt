@@ -25,7 +25,13 @@ interface CartItemRepository : JpaRepository<CartItem, UUID> {
 
 
     @Modifying
+    @Transactional
     @Query("UPDATE CartItem c SET c.availability = :availability WHERE c.id IN :ids")
     fun updateAvailabilityBatch(@Param("availability") availability: Availability, @Param("ids") ids: List<UUID>): Int
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM CartItem c WHERE c.id IN :ids")
+    fun deleteBatch(@Param("ids") ids: List<UUID>): Int
 
 }

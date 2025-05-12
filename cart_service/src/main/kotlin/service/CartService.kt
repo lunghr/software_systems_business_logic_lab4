@@ -118,4 +118,17 @@ class CartService(
         val ids = cart.items.map { it.id }
         cartItemRepository.updateAvailabilityBatch(Availability.BOOKED, ids)
     }
+
+    @Transactional
+    fun unbookOrder(userId: UUID){
+        val cart = getCartByUserId(userId)
+        val ids = cart.items.map { it.id }
+        cartItemRepository.updateAvailabilityBatch(Availability.AVAILABLE, ids)
+    }
+
+    @Transactional
+    fun clearCart(userId: UUID){
+        val cart = getCartByUserId(userId)
+        cartItemRepository.deleteBatch(cart.items.map { it.id })
+    }
 }

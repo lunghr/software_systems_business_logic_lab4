@@ -2,12 +2,16 @@ package com.example.service
 
 
 import com.example.kafka.CartServiceProducer
+import com.example.kafka.PaymentServiceProducer
 import com.example.kafka.ResponseStorage
+import com.example.kafka.tmp.ItemsResponse
 import com.example.model.CartServiceException
 import com.example.model.Order
 import com.example.model.OrderItem
+import com.example.model.OrderStatus
 import com.example.repos.OrderItemRepository
 import com.example.repos.OrderRepository
+import model.TransactionDto
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -21,7 +25,8 @@ class OrderService(
     private val orderItemRepository: OrderItemRepository,
     private val responseStorage: ResponseStorage,
     private val cartServiceProducer: CartServiceProducer,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val paymentServiceProducer: PaymentServiceProducer
 ) {
 
     private fun getListOfItems(order: Order): List<OrderItem> {
@@ -29,7 +34,7 @@ class OrderService(
         val correlationId = UUID.randomUUID()
         cartServiceProducer.getCart(userId, correlationId)
 
-        val response = responseStorage.waitForResponse(correlationId.toString())
+        val response = responseStorage.waitForResponse(correlationId.toString(), 5, ItemsResponse::class.java)
         response?.let {
             val items = it.items.map { item ->
                 OrderItem(
@@ -47,7 +52,7 @@ class OrderService(
         return jwtService.extractId(jwtService.extractToken(token))
     }
 
-
+    @Transactional
     fun createOrder(token: String): ResponseEntity<Any> {
         val userId = getUserId(token)
         val order = Order(userId = userId)
@@ -59,11 +64,39 @@ class OrderService(
         order.totalPrice = items.sumOf { item -> item.price * item.quantity }
         orderRepository.save(order)
         cartServiceProducer.bookOrder(userId)
-        return ResponseEntity.status(HttpStatus.CREATED).body(order.id)
-    }
+        val correlationId = UUID.randomUUID()
+        paymentServiceProducer.startTransaction(
+            userId = userId,
+            orderId = order.id,
+            transactionAmount = order.totalPrice,
+            correlationId = correlationId
+        )
 
-    @Transactional
-    fun delete(order: Order) {
-        orderRepository.delete(order)
+        val response = responseStorage.waitForResponse(correlationId.toString(), 5, TransactionDto::class.java)
+        response?.let {
+            if (!it.cardExists){
+                orderRepository.updateOrderStatus(
+                    id = order.id,
+                    status = OrderStatus.CANCELLED
+                )
+                cartServiceProducer.unbookOrder(userId)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Card does not exist")
+            }
+            if (!it.enoughMoney) {
+                orderRepository.updateOrderStatus(
+                    id = order.id,
+                    status = OrderStatus.CANCELLED
+                )
+                cartServiceProducer.unbookOrder(userId)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not enough money")
+            } else {
+                orderRepository.updateOrderStatus(
+                    id = order.id,
+                    status = OrderStatus.PAID
+                )
+                cartServiceProducer.clearCart(userId)
+            }
+        } ?: return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment service is not available")
+        return ResponseEntity.status(HttpStatus.OK).body("Order created and paid successfully")
     }
 }

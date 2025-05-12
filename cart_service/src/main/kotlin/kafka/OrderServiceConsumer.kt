@@ -30,7 +30,7 @@ class OrderServiceConsumer(
             "correlationId" to correlationId.toString()
         )
         val responseMessage = ObjectMapper().writeValueAsString(payload)
-        println("✅ Response message: $responseMessage")
+        println("✅ Sending cart response: $responseMessage")
         kafkaTemplate.send("get-cart-response", correlationId.toString(), responseMessage)
     }
 
@@ -39,6 +39,23 @@ class OrderServiceConsumer(
     fun bookOrderItems(message: String){
         val data = ObjectMapper().readTree(message)
         val userId = UUID.fromString(data.get("userId").asText())
+        println("✅ Book order")
         cartService.bookOrder(userId)
+    }
+
+    @KafkaListener(topics = ["unbook-order"])
+    fun unbookOrderItems(message: String){
+        val data = ObjectMapper().readTree(message)
+        val userId = UUID.fromString(data.get("userId").asText())
+        println("✅ Unbook order")
+        cartService.unbookOrder(userId)
+    }
+
+    @KafkaListener(topics = ["clear-cart"])
+    fun clearCart(message: String){
+        val data = ObjectMapper().readTree(message)
+        val userId = UUID.fromString(data.get("userId").asText())
+        println("✅ Clear cart")
+        cartService.clearCart(userId)
     }
 }
