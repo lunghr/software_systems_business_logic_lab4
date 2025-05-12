@@ -1,11 +1,5 @@
 package com.example.software_systems_business_logic_lab1.application.services
 
-import com.example.software_systems_business_logic_lab1.application.models.CartProduct
-import com.example.software_systems_business_logic_lab1.application.models.Order
-import com.example.software_systems_business_logic_lab1.application.models.OutOfStockException
-import com.example.software_systems_business_logic_lab1.application.models.ProductNotFoundException
-import com.example.software_systems_business_logic_lab1.application.repos.OrderProductRepository
-
 import org.springframework.data.cassandra.core.CassandraTemplate
 import org.springframework.stereotype.Service
 import java.util.*

@@ -17,5 +17,12 @@ data class CartItem(
     val productId: UUID,
 
     @Column(name = "product_name")
-    val quantity: Int
+    val quantity: Int,
+
+    @Column(name = "price")
+    val price: Double,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "availability")
+    var availability: Availability = Availability.AVAILABLE
 )

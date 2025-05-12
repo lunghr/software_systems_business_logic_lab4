@@ -1,7 +1,6 @@
 package com.example.controller
 
 import com.example.service.CartService
-import org.springframework.messaging.handler.annotation.Header
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
@@ -15,7 +14,7 @@ class CartController(
     @GetMapping("/get")
     fun getCart(
         @RequestHeader("Authorization") token: String,
-    ) = cartService.getCart(token)
+    ) = cartService.getCart(token).items.map {it.productId}
 
     @DeleteMapping("/delete/{productId}")
     fun deleteProductFromCart(

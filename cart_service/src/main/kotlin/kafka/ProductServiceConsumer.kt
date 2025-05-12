@@ -15,7 +15,8 @@ class ProductServiceConsumer(
         val data = ObjectMapper().readTree(message)
         val productAvailabilityResponse = ProductAvailabilityResponse(
             exists = data.get("exists").asBoolean(),
-            enough = data.get("enough").asBoolean()
+            enough = data.get("enough").asBoolean(),
+            price = data.get("price").asDouble(0.0)
         )
         val correlationId = data.get("correlationId").asText()
         responseStorage.storeResponse(correlationId, productAvailabilityResponse)

@@ -1,4 +1,4 @@
-package com.example.service.kafka
+package com.example.kafka
 
 import com.example.service.ProductService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,6 +24,7 @@ class CartServiceListener(
         val response = mapOf(
             "exists" to availability.first,
             "enough" to availability.second,
+            "price"  to availability.third,
             "correlationId" to correlationId.toString()
         )
         val responseMessage = ObjectMapper().writeValueAsString(response)

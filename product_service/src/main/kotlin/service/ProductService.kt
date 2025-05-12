@@ -23,10 +23,10 @@ class ProductService(
             }
             ?: throw CategoryIsParentException(productDto.categoryId.toString())
 
-    fun isAvailableToOrder(productId: UUID, quantity: Int): Pair<Boolean, Boolean> {
+    fun isAvailableToOrder(productId: UUID, quantity: Int): Triple<Boolean, Boolean, Double> {
         val product = productRepository.findProductByKeyProductId(productId)
-            ?: return Pair(false, false)
-        return if (product.stockQuantity < quantity) Pair(true, false) else Pair(true, true)
+            ?: return Triple(false, false, 0.0)
+        return if (product.stockQuantity < quantity) Triple(true, false, 0.0) else Triple(true, true, product.price)
     }
 
     fun changeProductStockQuantity(productId: UUID, categoryId: UUID, quantity: Int): Boolean {

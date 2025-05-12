@@ -6,6 +6,7 @@ import com.example.kafka.ResponseStorage
 import com.example.model.*
 import com.example.repos.CartItemRepository
 import com.example.repos.CartRepository
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -24,19 +25,22 @@ class CartService(
         return cartRepository.save(Cart(userId = id))
     }
 
-    fun getCart(token: String): List<CartItem> {
-        return getCartByUserId(token).items
+    @Transactional
+    fun getListOfCartProductsForOrder(id: UUID): List<CartItem> {
+        return cartRepository.findByUserId(id)?.items?.filter { it.availability == Availability.AVAILABLE }
+            ?: throw CartNotFoundException()
     }
 
     fun addProductToCart(token: String, productId: UUID, quantity: Int): ResponseEntity<HttpStatus> {
-        val cart = getCartByUserId(token)
+        val cart = getCart(token)
         require(!isInCart(productId, cart)) { throw ProductAlreadyInCartException() }
         return checkAvailability(productId, quantity, HttpStatus.CREATED).let {
             cartItemRepository.save(
                 CartItem(
                     cart = cart,
                     productId = productId,
-                    quantity = quantity
+                    quantity = quantity,
+                    price = it.second
                 )
             )
             ResponseEntity(HttpStatus.CREATED)
@@ -44,7 +48,7 @@ class CartService(
     }
 
     fun incrementProductQuantity(token: String, productId: UUID): ResponseEntity<HttpStatus> {
-        val cart = getCartByUserId(token)
+        val cart = getCart(token)
         require(isInCart(productId, cart)) { throw ProductNotFoundException() }
         val cartItem = getCartItem(cart.id, productId)
         return checkAvailability(productId, 1 + cartItem.quantity, HttpStatus.OK).let {
@@ -54,7 +58,7 @@ class CartService(
     }
 
     fun decrementProductQuantity(token: String, productId: UUID): ResponseEntity<HttpStatus> {
-       val cart = getCartByUserId(token)
+        val cart = getCart(token)
         require(isInCart(productId, cart)) { throw ProductNotFoundException() }
         val cartItem = getCartItem(cart.id, productId)
         if (cartItem.quantity - 1 == 0) {
@@ -67,7 +71,7 @@ class CartService(
 
 
     fun deleteProductFromCart(token: String, productId: UUID): ResponseEntity<HttpStatus> {
-        val cart = getCartByUserId(token)
+        val cart = getCart(token)
         require(isInCart(productId, cart)) { throw ProductNotFoundException() }
         val cartItem = getCartItem(cart.id, productId)
         cartItemRepository.delete(cartItem)
@@ -75,13 +79,13 @@ class CartService(
     }
 
 
-    private fun checkAvailability(productId: UUID, quantity: Int, status: HttpStatus): Boolean {
+    private fun checkAvailability(productId: UUID, quantity: Int, status: HttpStatus): Pair<Boolean, Double> {
         val correlationId = UUID.randomUUID()
         productServiceProducer.sendProductAvailability(productId, quantity, correlationId)
         val response = responseStorage.waitForResponse(correlationId.toString())
         response?.let {
             when {
-                it.enough && it.exists -> return true
+                it.enough && it.exists -> return Pair(true, it.price)
                 !it.enough && it.exists -> throw NotEnoughProductException()
                 else -> throw ProductNotFoundException()
             }
@@ -94,7 +98,7 @@ class CartService(
     }
 
 
-    private fun getCartByUserId(token: String): Cart {
+    fun getCart(token: String): Cart {
         val userId = jwtService.extractId(jwtService.extractToken(token))
         return cartRepository.findByUserId(userId) ?: throw CartNotFoundException()
     }
@@ -102,5 +106,16 @@ class CartService(
     private fun getCartItem(cartId: UUID, productId: UUID): CartItem {
         return cartItemRepository.findByCartIdAndProductId(cartId, productId)
             ?: throw ProductNotFoundException()
+    }
+
+    private fun getCartByUserId(id: UUID): Cart {
+        return cartRepository.findByUserId(id) ?: throw CartNotFoundException()
+    }
+
+    @Transactional
+    fun bookOrder(userId: UUID){
+        val cart = getCartByUserId(userId)
+        val ids = cart.items.map { it.id }
+        cartItemRepository.updateAvailabilityBatch(Availability.BOOKED, ids)
     }
 }
