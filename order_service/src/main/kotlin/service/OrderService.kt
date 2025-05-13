@@ -5,11 +5,7 @@ import com.example.kafka.CartServiceProducer
 import com.example.kafka.PaymentServiceProducer
 import com.example.kafka.ResponseStorage
 import com.example.kafka.tmp.ItemsResponse
-import com.example.model.CartServiceException
-import com.example.model.Order
-import com.example.model.OrderItem
-import com.example.model.OrderStatus
-import com.example.repos.OrderItemRepository
+import com.example.model.*
 import com.example.repos.OrderRepository
 import model.TransactionDto
 import org.springframework.http.HttpStatus
@@ -22,11 +18,11 @@ import java.util.UUID
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val orderItemRepository: OrderItemRepository,
     private val responseStorage: ResponseStorage,
     private val cartServiceProducer: CartServiceProducer,
     private val jwtService: JwtService,
-    private val paymentServiceProducer: PaymentServiceProducer
+    private val paymentServiceProducer: PaymentServiceProducer,
+    private val orderSchedulerService: OrderSchedulerService
 ) {
 
     private fun getListOfItems(order: Order): List<OrderItem> {
@@ -52,6 +48,7 @@ class OrderService(
         return jwtService.extractId(jwtService.extractToken(token))
     }
 
+
     @Transactional
     fun createOrder(token: String): ResponseEntity<Any> {
         val userId = getUserId(token)
@@ -64,6 +61,19 @@ class OrderService(
         order.totalPrice = items.sumOf { item -> item.price * item.quantity }
         orderRepository.save(order)
         cartServiceProducer.bookOrder(userId)
+        orderSchedulerService.scheduledOrderCancellation(order.id)
+        return ResponseEntity.status(HttpStatus.OK).body("Order created successfully: ${order.id}")
+    }
+
+    private fun getOrderById(id: UUID): Order {
+        return orderRepository.findById(id).orElseThrow { OrderNotFoundException() }
+    }
+
+
+    @Transactional
+    fun payOrder(orderId: UUID): ResponseEntity<Any> {
+        val order = getOrderById(orderId)
+        val userId = order.userId
         val correlationId = UUID.randomUUID()
         paymentServiceProducer.startTransaction(
             userId = userId,
@@ -74,7 +84,7 @@ class OrderService(
 
         val response = responseStorage.waitForResponse(correlationId.toString(), 5, TransactionDto::class.java)
         response?.let {
-            if (!it.cardExists){
+            if (!it.cardExists) {
                 orderRepository.updateOrderStatus(
                     id = order.id,
                     status = OrderStatus.CANCELLED
@@ -97,6 +107,19 @@ class OrderService(
                 cartServiceProducer.clearCart(userId)
             }
         } ?: return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment service is not available")
-        return ResponseEntity.status(HttpStatus.OK).body("Order created and paid successfully")
+        return ResponseEntity.status(HttpStatus.OK).body("Order paid successfully")
     }
+
+    fun cancelOrder(orderId: UUID) {
+        val order = getOrderById(orderId)
+        if (order.status == OrderStatus.WAITING_FOR_PAYMENT) {
+            orderRepository.updateOrderStatus(
+                id = order.id,
+                status = OrderStatus.CANCELLED
+            )
+            cartServiceProducer.unbookOrder(order.userId)
+        }
+    }
+
+
 }

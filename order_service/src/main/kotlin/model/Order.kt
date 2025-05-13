@@ -15,7 +15,7 @@ data class Order(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "status")
-    var status: OrderStatus = OrderStatus.PENDING,
+    var status: OrderStatus = OrderStatus.WAITING_FOR_PAYMENT,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var items: List<OrderItem> = emptyList(),

@@ -2,6 +2,7 @@ package com.example.controller
 
 import com.example.service.OrderService
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/order")
@@ -13,5 +14,10 @@ class OrderController(
     fun createOrder(
         @RequestHeader("Authorization") token: String,
     ) = orderService.createOrder(token)
+
+    @PostMapping("/pay")
+    fun payOrder(
+        @RequestParam ("orderId") orderId: UUID
+    ) = orderService.payOrder(orderId)
 
 }

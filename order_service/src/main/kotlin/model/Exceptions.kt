@@ -6,3 +6,6 @@ class CartServiceException :
 class CartIsEmptyException :
     RuntimeException("Cart is empty")
 
+class OrderNotFoundException :
+    RuntimeException("Order not found")
+
