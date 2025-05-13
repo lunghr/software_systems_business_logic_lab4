@@ -12,6 +12,7 @@ class CancelUnpaidOrder(
 ): Job {
     override fun execute(context: JobExecutionContext) {
         val orderId  = context.jobDetail.jobDataMap.getString("orderId")
-        orderService.cancelOrder(UUID.fromString(orderId))
+        val userEmail = context.jobDetail.jobDataMap.getString("userEmail")
+        orderService.cancelOrder(UUID.fromString(orderId), userEmail)
     }
 }

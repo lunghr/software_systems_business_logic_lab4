@@ -49,10 +49,7 @@ class AuthService(
             password = passwordEncoder.encode(request.password)
         )
 
-//        println("${user.email}, ${user.phoneNumber}, ${user.password}, ${user.role}")
-
         userService.createUser(user)
-        println("User created")
         return generateToken(user)
     }
 

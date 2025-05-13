@@ -17,7 +17,8 @@ class OrderController(
 
     @PostMapping("/pay")
     fun payOrder(
+        @RequestHeader("Authorization") token: String,
         @RequestParam ("orderId") orderId: UUID
-    ) = orderService.payOrder(orderId)
+    ) = orderService.payOrder(token, orderId)
 
 }

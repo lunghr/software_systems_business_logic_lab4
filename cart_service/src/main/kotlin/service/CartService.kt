@@ -93,7 +93,6 @@ class CartService(
     }
 
     private fun isInCart(productId: UUID, cart: Cart): Boolean {
-        println("cartId: ${cart.id}, productId: $productId")
         return cartItemRepository.findByCartIdAndProductId(cart.id, productId) != null
     }
 

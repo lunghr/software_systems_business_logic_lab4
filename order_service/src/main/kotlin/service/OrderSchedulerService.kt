@@ -12,15 +12,16 @@ class OrderSchedulerService(
     private val scheduler: Scheduler
 ) {
 
-    fun scheduledOrderCancellation(orderId: UUID){
+    fun scheduledOrderCancellation(orderId: UUID, userEmail: String) {
         val jobDetail = JobBuilder.newJob(CancelUnpaidOrder::class.java)
             .withIdentity(orderId.toString())
             .usingJobData("orderId", orderId.toString())
+            .usingJobData("userEmail", userEmail)
             .build()
 
         val trigger = TriggerBuilder.newTrigger()
             .withIdentity("cancel-trigger-$orderId", "orders")
-//            .startAt(Date(System.currentTimeMillis() + (0.5 * 60 * 1000).toLong()))
+//            .startAt(Date(System.currentTimeMillis() + (0.1 * 60 * 1000).toLong()))
             .startAt(Date(System.currentTimeMillis() + (1 * 60 * 1000).toLong()))
             .build()
 

@@ -29,7 +29,9 @@ class JwtService {
             .body
 
     fun extractId(token: String): UUID = UUID.fromString(parseToken(token)["id"].toString())
-
+    fun extractEmail(token: String): String {
+        return parseToken(token)["email"].toString()
+    }
     private fun getExpiration(token: String): Date = parseToken(token).expiration
 
     fun extractToken(token: String): String = token.removePrefix("Bearer ")

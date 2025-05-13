@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import service.EmailService
 import service.JwtService
 import java.util.UUID
 
@@ -22,8 +23,10 @@ class OrderService(
     private val cartServiceProducer: CartServiceProducer,
     private val jwtService: JwtService,
     private val paymentServiceProducer: PaymentServiceProducer,
-    private val orderSchedulerService: OrderSchedulerService
+    private val orderSchedulerService: OrderSchedulerService,
+    private val emailService: EmailService
 ) {
+
 
     private fun getListOfItems(order: Order): List<OrderItem> {
         val userId = order.userId
@@ -48,10 +51,15 @@ class OrderService(
         return jwtService.extractId(jwtService.extractToken(token))
     }
 
+    private fun getUserEmail(token: String): String {
+        return jwtService.extractEmail(jwtService.extractToken(token))
+    }
+
 
     @Transactional
     fun createOrder(token: String): ResponseEntity<Any> {
         val userId = getUserId(token)
+        val userEmail = getUserEmail(token)
         val order = Order(userId = userId)
         val items = getListOfItems(order)
         if (items.isEmpty()) {
@@ -61,7 +69,13 @@ class OrderService(
         order.totalPrice = items.sumOf { item -> item.price * item.quantity }
         orderRepository.save(order)
         cartServiceProducer.bookOrder(userId)
-        orderSchedulerService.scheduledOrderCancellation(order.id)
+        orderSchedulerService.scheduledOrderCancellation(order.id, userEmail)
+        emailService.sendCreatedOrderEmail(
+            toEmail = userEmail,
+            orderId = order.id.toString(),
+            totalPrice = order.totalPrice,
+            paymentWindow = "$30 seconds"
+        )
         return ResponseEntity.status(HttpStatus.OK).body("Order created successfully: ${order.id}")
     }
 
@@ -71,10 +85,11 @@ class OrderService(
 
 
     @Transactional
-    fun payOrder(orderId: UUID): ResponseEntity<Any> {
+    fun payOrder(token: String, orderId: UUID): ResponseEntity<Any> {
         val order = getOrderById(orderId)
         val userId = order.userId
         val correlationId = UUID.randomUUID()
+        val userEmail = getUserEmail(token)
         paymentServiceProducer.startTransaction(
             userId = userId,
             orderId = order.id,
@@ -90,6 +105,9 @@ class OrderService(
                     status = OrderStatus.CANCELLED
                 )
                 cartServiceProducer.unbookOrder(userId)
+                emailService.sendCancelledOrderEmail(
+                    toEmail = userEmail
+                )
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Card does not exist")
             }
             if (!it.enoughMoney) {
@@ -98,6 +116,9 @@ class OrderService(
                     status = OrderStatus.CANCELLED
                 )
                 cartServiceProducer.unbookOrder(userId)
+                emailService.sendCancelledOrderEmail(
+                    toEmail = userEmail
+                )
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not enough money")
             } else {
                 orderRepository.updateOrderStatus(
@@ -107,10 +128,14 @@ class OrderService(
                 cartServiceProducer.clearCart(userId)
             }
         } ?: return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment service is not available")
+        emailService.sendPaidOrderEmail(
+            toEmail = userEmail,
+            orderId = order.id.toString()
+        )
         return ResponseEntity.status(HttpStatus.OK).body("Order paid successfully")
     }
 
-    fun cancelOrder(orderId: UUID) {
+    fun cancelOrder(orderId: UUID, userEmail: String) {
         val order = getOrderById(orderId)
         if (order.status == OrderStatus.WAITING_FOR_PAYMENT) {
             orderRepository.updateOrderStatus(
@@ -118,6 +143,9 @@ class OrderService(
                 status = OrderStatus.CANCELLED
             )
             cartServiceProducer.unbookOrder(order.userId)
+            emailService.sendCancelledOrderEmail(
+                toEmail = userEmail
+            )
         }
     }
 

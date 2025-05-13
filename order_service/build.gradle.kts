@@ -27,6 +27,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
+    implementation("com.sendgrid:sendgrid-java:4.10.1")
     testImplementation(kotlin("test"))
 }
 
