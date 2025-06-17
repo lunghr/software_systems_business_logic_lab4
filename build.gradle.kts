@@ -60,6 +60,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
+    sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
 }
 
 tasks.test {
