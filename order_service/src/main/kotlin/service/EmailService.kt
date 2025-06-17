@@ -1,20 +1,32 @@
 package service
 
+import com.example.kafka.KafkaServiceConsumer
+import com.example.kafka.KafkaServiceProducer
+import com.example.kafka.ResponseStorage
 import com.sendgrid.*
 import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Email
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import com.sendgrid.helpers.mail.objects.Personalization
+import java.util.UUID
 
 
 @Service
 class EmailService(
-    private val sendGridApiKey: String = ""
+    private val kafkaServiceProducer: KafkaServiceProducer,
+    private val responseStorage: ResponseStorage
 ) {
 
     fun sendCreatedOrderEmail(toEmail: String, orderId: String, totalPrice: Double, paymentWindow: String) {
-        val templateId = "d-1a3ff013ea4a4583ae6ef4166ccff0e0"
+        val correlationID = UUID.randomUUID()
+        kafkaServiceProducer.getCreateTemplate(correlationID)
+
+        val templateId = responseStorage.waitForResponse(
+            correlationID.toString(),
+            5,
+            String::class.java
+        ) ?: throw RuntimeException("Failed to get Create Template ID")
+
         val dynamicData = mapOf(
             "order_id" to orderId,
             "total_price" to totalPrice.toString(),
@@ -24,7 +36,16 @@ class EmailService(
     }
 
     fun sendPaidOrderEmail(toEmail: String, orderId: String) {
-        val templateId = "d-fda64314066c4d62a1d147e3bd8d17a4"
+        val correlationID = UUID.randomUUID()
+        kafkaServiceProducer.getPaidTemplate(correlationID)
+
+        val templateId = responseStorage.waitForResponse(
+            correlationID.toString(),
+            5,
+            String::class.java
+        ) ?: throw RuntimeException("Failed to get Paid Template ID")
+
+
         val dynamicData = mapOf(
             "order_id" to orderId
         )
@@ -32,7 +53,14 @@ class EmailService(
     }
 
     fun sendCancelledOrderEmail(toEmail: String) {
-        val templateId = "d-308b5c4bcda24d89b2545af9230634e5"
+        val correlationID = UUID.randomUUID()
+        kafkaServiceProducer.getCancelledTemplate(correlationID)
+        val templateId = responseStorage.waitForResponse(
+            correlationID.toString(),
+            5,
+            String::class.java
+        ) ?: throw RuntimeException("Failed to get Cancelled Template ID")
+
         val dynamicData = mapOf(
             "email" to toEmail,
         )
@@ -42,6 +70,14 @@ class EmailService(
     private fun sendEmail(toEmail: String, templateId: String, dynamicData: Map<String, Any>) {
         val from = Email("myilanka8@gmail.com")
         val to = Email(toEmail)
+        val correlationID = UUID.randomUUID()
+        kafkaServiceProducer.getApiKey(correlationID)
+
+        val sendGridApiKey = responseStorage.waitForResponse(
+            correlationID.toString(),
+            5,
+            String::class.java
+        ) ?: throw RuntimeException("Failed to get SendGrid API key")
 
 
         val personalization = Personalization().apply {

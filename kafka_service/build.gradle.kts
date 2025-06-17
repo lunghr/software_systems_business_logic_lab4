@@ -18,6 +18,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("org.apache.zookeeper:zookeeper:3.8.1")
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
     implementation("org.springframework.kafka:spring-kafka")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
