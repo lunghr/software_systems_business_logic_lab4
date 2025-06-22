@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import service.CamundaProcessStarter
 import service.EmailService
 import service.JwtService
 import java.util.UUID
@@ -23,7 +24,7 @@ class OrderService(
     private val cartServiceProducer: CartServiceProducer,
     private val jwtService: JwtService,
     private val paymentServiceProducer: PaymentServiceProducer,
-    private val orderSchedulerService: OrderSchedulerService,
+    private val camundaProcessStarter: CamundaProcessStarter,
     private val emailService: EmailService
 ) {
 
@@ -58,26 +59,34 @@ class OrderService(
 
     @Transactional
     fun createOrder(token: String): ResponseEntity<Any> {
-        val userId = getUserId(token)
+        val userId    = getUserId(token)
         val userEmail = getUserEmail(token)
+
         val order = Order(userId = userId)
         val items = getListOfItems(order)
         if (items.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Cart is empty")
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("Cart is empty")
         }
-        order.items = items
-        order.totalPrice = items.sumOf { item -> item.price * item.quantity }
+
+        order.items       = items
+        order.totalPrice  = items.sumOf { it.price * it.quantity }
         orderRepository.save(order)
+
         cartServiceProducer.bookOrder(userId)
-        orderSchedulerService.scheduledOrderCancellation(order.id, userEmail)
+
+        // 👉 вместо Spring-планировщика запускаем BPM-процесс
+        camundaProcessStarter.startOrderCancellation(order.id, userEmail)
+
         emailService.sendCreatedOrderEmail(
-            toEmail = userEmail,
-            orderId = order.id.toString(),
-            totalPrice = order.totalPrice,
-            paymentWindow = "$30 seconds"
+            toEmail        = userEmail,
+            orderId        = order.id.toString(),
+            totalPrice     = order.totalPrice,
+            paymentWindow  = "30 seconds"
         )
-        return ResponseEntity.status(HttpStatus.OK).body("Order created successfully: ${order.id}")
+        return ResponseEntity.ok("Order created successfully: ${order.id}")
     }
+
 
     private fun getOrderById(id: UUID): Order {
         return orderRepository.findById(id).orElseThrow { OrderNotFoundException() }
