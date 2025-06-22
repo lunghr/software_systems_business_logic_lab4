@@ -1,44 +1,45 @@
 package service
 
 import com.example.service.OrderService
-import jakarta.annotation.PostConstruct
-import org.camunda.bpm.client.ExternalTaskClient
-import org.springframework.beans.factory.annotation.Value
+import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription
+import org.camunda.bpm.client.task.ExternalTask
+import org.camunda.bpm.client.task.ExternalTaskHandler
+import org.camunda.bpm.client.task.ExternalTaskService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
+@ExternalTaskSubscription(
+    topicName = "cancel-order",          // ← правильное имя атрибута
+    lockDuration = 30_000L,
+    variableNames = ["orderId", "userEmail"] // ← …и здесь
+)
 class CancelOrderWorker(
-    @Value("\${camunda.rest.url}") private val camundaRest: String,
     private val orderService: OrderService
-) {
+) : ExternalTaskHandler {
 
-    private lateinit var client: ExternalTaskClient   // держим ссылку!
+    private val log = LoggerFactory.getLogger(javaClass)
 
-    @PostConstruct
-    fun subscribe() {
+    override fun execute(task: ExternalTask, service: ExternalTaskService) {
+        try {
+            val orderId = UUID.fromString(task.getVariable<String>("orderId"))
+            val userEmail = task.getVariable<String>("userEmail")
+            log.info("📩  task={} orderId={} userEmail={}", task.id, orderId, userEmail)
 
-        client = ExternalTaskClient.create()          // инициализация
-            .workerId("order-service")                // явное имя воркера
-            .baseUrl(camundaRest)                     // http://camunda:8080/…
-            .asyncResponseTimeout(30_000)
-            .build()
-
-        client.subscribe("cancel-order")
-//            .tenantIdIn("cancel-order")             // один tenant
-            .lockDuration(30_000)
-            .variables("orderId","userEmail")
-            .handler { task, svc ->
-                println("📩 task ${task.id}")
-                val orderId   = task.getVariable<String>("orderId")
-                val userEmail = task.getVariable<String>("userEmail")
-                println("📋 orderId=$orderId  userEmail=$userEmail")
-                orderService.cancelOrder(UUID.fromString(orderId), userEmail)
-                svc.complete(task)
-                println("✅ done ${task.id}")
-            }
-
-        println("🟢 External task client started, subscribed to cancel-order")
+            orderService.cancelOrder(orderId, userEmail)
+            service.complete(task)                          // <-- успех
+            log.info("✅  completed task={}", task.id)
+        } catch (ex: Exception) {
+            log.error("❌  error in task={}, {}", task.id, ex.message, ex)
+            // ⚠️  позиционные аргументы, без имён!
+            service.handleFailure(
+                task,
+                ex.message ?: "unexpected error",
+                ex.stackTraceToString(),
+                3,            // retries
+                5_000L        // retryTimeout in ms
+            )
+        }
     }
 }
-

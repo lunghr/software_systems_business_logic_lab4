@@ -26,7 +26,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    implementation("org.camunda.bpm:camunda-external-task-client-spring:7.23.0")
+
+    implementation("org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-external-task-client:7.23.0")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("com.sendgrid:sendgrid-java:4.10.1")
