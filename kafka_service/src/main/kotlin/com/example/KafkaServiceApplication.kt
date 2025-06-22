@@ -8,7 +8,6 @@ import org.springframework.kafka.annotation.EnableKafka
 
 @EnableKafka
 @SpringBootApplication
-@ComponentScan(basePackages = ["com.example", "kafka"])
 class KafkaServiceApplication
 
 fun main(args: Array<String>) {

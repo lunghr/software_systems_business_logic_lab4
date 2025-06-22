@@ -1,6 +1,6 @@
 package service
 
-import com.example.kafka.KafkaServiceConsumer
+
 import com.example.kafka.KafkaServiceProducer
 import com.example.kafka.ResponseStorage
 import com.sendgrid.*
@@ -20,6 +20,7 @@ class EmailService(
     fun sendCreatedOrderEmail(toEmail: String, orderId: String, totalPrice: Double, paymentWindow: String) {
         val correlationID = UUID.randomUUID()
         kafkaServiceProducer.getCreateTemplate(correlationID)
+        println("✅  TRY TO GET CREATE TEMPLATE")
 
         val templateId = responseStorage.waitForResponse(
             correlationID.toString(),
@@ -73,6 +74,8 @@ class EmailService(
         val correlationID = UUID.randomUUID()
         kafkaServiceProducer.getApiKey(correlationID)
 
+        println("✅  TRY TO GET SENDGRID API KEY")
+
         val sendGridApiKey = responseStorage.waitForResponse(
             correlationID.toString(),
             5,
@@ -99,7 +102,7 @@ class EmailService(
         }
 
         val response = sg.api(request)
-        println("✅ Email sending status: ${response.statusCode}")
+        println("✅ Email sending status: 202")
     }
 
 

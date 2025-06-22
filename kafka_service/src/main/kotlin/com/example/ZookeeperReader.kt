@@ -1,8 +1,10 @@
+package com.example
+
 import org.apache.zookeeper.ZooKeeper
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 
-@Service
+@Component
 class ZookeeperReader {
 
     private val zk = ZooKeeper("zookeeper:2181", 3000) { println("Connected to ZooKeeper for reading") }

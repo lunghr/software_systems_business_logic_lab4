@@ -17,6 +17,7 @@ class KafkaServiceConsumer(
         val data = objectMapper.readTree(message)
         val correlationId = data.get("correlationId").asText()
         val apiKey = data.get("apiKey").asText()
+        println("✅ Received API Key response: $apiKey for correlationId: $correlationId")
         responseStorage.storeResponse(correlationId, apiKey)
     }
 
@@ -25,6 +26,7 @@ class KafkaServiceConsumer(
         val data = objectMapper.readTree(message)
         val correlationId = data.get("correlationId").asText()
         val paidTemplate = data.get("paidTemplate").asText()
+        println("✅ Received Paid Template response: $paidTemplate for correlationId: $correlationId")
         responseStorage.storeResponse(correlationId, paidTemplate)
     }
 
@@ -34,6 +36,7 @@ class KafkaServiceConsumer(
         val data = objectMapper.readTree(message)
         val correlationId = data.get("correlationId").asText()
         val createTemplate = data.get("createTemplate").asText()
+        println("✅ Received Create Template response: $createTemplate for correlationId: $correlationId")
         responseStorage.storeResponse(correlationId, createTemplate)
     }
 
@@ -42,6 +45,7 @@ class KafkaServiceConsumer(
         val data = objectMapper.readTree(message)
         val correlationId = data.get("correlationId").asText()
         val cancelledTemplate = data.get("cancelledTemplate").asText()
+        println("✅ Received Cancelled Template response: $cancelledTemplate for correlationId: $correlationId")
         responseStorage.storeResponse(correlationId, cancelledTemplate)
     }
 }

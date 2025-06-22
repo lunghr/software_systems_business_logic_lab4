@@ -6,7 +6,6 @@ import org.apache.zookeeper.ZooDefs
 import org.apache.zookeeper.ZooKeeper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
 
 @Component

@@ -1,6 +1,5 @@
 package com.example
 
-import ZookeeperReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
@@ -19,7 +18,6 @@ class OrderServiceConsumer(
         val data = objectMapper.readTree(message)
         val correlationId = data.get("correlationId").asText()
 
-        // Simulate fetching API key from a service or database
         val apiKey = zookeeperReader.read("/mail/api_key")
         val payload = mapOf(
             "apiKey" to apiKey,
